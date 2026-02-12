@@ -1,0 +1,624 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zheye Song — Academic Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+        :root{
+            --bg:#F7F3E8;
+            --text:#000000;
+            --text-sec:#555;
+            --card-bg:rgba(255,255,255,0.62);
+            --border-c:rgba(0,0,0,0.05);
+            --link-hover:#FF8C00;
+            --sep:#aaa;
+            --tab-bg:rgba(255,255,255,0.48);
+            --tab-bg-active:rgba(255,204,0,0.14);
+            --panel-bg:rgba(255,255,255,0.42);
+        }
+        [data-theme="dark"]{
+            --bg:#050505;
+            --text:#FFFFFF;
+            --text-sec:#aaa;
+            --card-bg:rgba(5,5,5,0.62);
+            --border-c:rgba(255,255,255,0.1);
+            --link-hover:#00FF41;
+            --sep:#555;
+            --tab-bg:rgba(8,18,10,0.52);
+            --tab-bg-active:rgba(0,255,65,0.16);
+            --panel-bg:rgba(8,16,10,0.44);
+        }
+
+        html,body{
+            width:100%;min-height:100%;
+            overflow-x:hidden;
+            background:var(--bg);
+            color:var(--text);
+            font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+            line-height:1.5;
+            transition:background-color .4s ease,color .4s ease;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+
+        canvas#bg{
+            position:fixed;inset:0;
+            z-index:0;pointer-events:none;
+            display:block;
+        }
+
+        .wrap{
+            position:relative;z-index:1;
+            display:flex;justify-content:center;align-items:center;
+            min-height:100vh;padding:2rem 1rem;
+        }
+
+        .card{
+            width:min(92vw,720px);max-width:720px;
+            padding:3rem 2.5rem;
+            background:var(--card-bg);
+            backdrop-filter:blur(14px);
+            -webkit-backdrop-filter:blur(14px);
+            border:1px solid var(--border-c);
+            border-radius:16px;
+            text-align:center;
+            opacity:0;
+            animation:fadeUp .8s ease-out .15s forwards;
+        }
+
+        @keyframes fadeUp{
+            from{opacity:0;transform:translateY(26px)}
+            to{opacity:1;transform:translateY(0)}
+        }
+
+        h1.name{
+            font-family:'Playfair Display',Georgia,'Times New Roman',serif;
+            font-size:clamp(1.8rem,5vw,2.6rem);
+            font-weight:700;letter-spacing:-.01em;
+            margin-bottom:.5rem;line-height:1.15;
+        }
+        .title{
+            font-size:clamp(.85rem,2.2vw,1rem);
+            font-weight:400;color:var(--text-sec);
+            margin-bottom:.7rem;line-height:1.55;
+        }
+        .interests{
+            font-size:clamp(.8rem,2vw,.9rem);
+            font-weight:300;color:var(--text-sec);
+            margin-bottom:2rem;line-height:1.65;
+        }
+        nav.links{
+            display:flex;justify-content:center;align-items:center;
+            flex-wrap:wrap;gap:.15rem 0;font-size:.88rem;
+            margin-bottom:1.2rem;
+        }
+        nav.links a{
+            color:var(--text);text-decoration:none;
+            padding:.35rem .6rem;border-radius:4px;
+            transition:color .2s ease;font-weight:400;
+        }
+        nav.links a:hover,nav.links a:focus-visible{color:var(--link-hover)}
+        nav.links a:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px}
+        nav.links .sep{color:var(--sep);user-select:none;font-size:.7rem;padding:0 .1rem}
+        .page-nav{
+            display:flex;justify-content:center;align-items:center;
+            gap:.45rem;flex-wrap:wrap;
+        }
+        .page-btn{
+            border:1px solid var(--border-c);
+            background:var(--tab-bg);
+            color:var(--text);
+            border-radius:999px;
+            padding:.38rem .92rem;
+            min-height:38px;
+            line-height:1;
+            font-size:.82rem;
+            font-weight:500;
+            cursor:pointer;
+            transition:background .22s ease,border-color .22s ease,color .22s ease,transform .15s ease;
+            backdrop-filter:blur(4px);
+            -webkit-backdrop-filter:blur(4px);
+        }
+        .page-btn:hover{transform:translateY(-1px)}
+        .page-btn.active{
+            background:var(--tab-bg-active);
+            border-color:var(--link-hover);
+            color:var(--link-hover);
+        }
+        .page-btn:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px}
+        .panels{
+            text-align:left;
+            margin-top:.75rem;
+        }
+        .panel{
+            max-height:0;
+            opacity:0;
+            overflow:hidden;
+            margin:0;
+            padding:0 .95rem;
+            border:1px solid transparent;
+            border-radius:11px;
+            background:transparent;
+            transform:translateY(-6px);
+            transition:max-height .38s ease,opacity .26s ease,transform .26s ease,padding .26s ease,margin .26s ease,border-color .26s ease,background .26s ease;
+        }
+        .panel.active{
+            max-height:280px;
+            opacity:1;
+            margin:.42rem 0 0;
+            padding:.85rem .95rem;
+            border-color:var(--border-c);
+            background:var(--panel-bg);
+            transform:translateY(0);
+        }
+        .panel h2{
+            font-family:'Playfair Display',Georgia,'Times New Roman',serif;
+            font-size:.98rem;
+            margin-bottom:.28rem;
+            letter-spacing:.01em;
+        }
+        .panel p{
+            font-size:.84rem;
+            color:var(--text-sec);
+            line-height:1.58;
+        }
+        .panel a{
+            color:var(--link-hover);
+            text-decoration:none;
+        }
+        .panel a:hover,.panel a:focus-visible{text-decoration:underline}
+        .foot{margin-top:2rem;font-size:.72rem;color:var(--text-sec);opacity:.5}
+
+        #themeToggle{
+            position:fixed;top:1rem;right:1rem;z-index:10;
+            background:var(--card-bg);
+            backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+            border:1px solid var(--border-c);border-radius:50%;
+            width:44px;height:44px;
+            display:flex;align-items:center;justify-content:center;
+            cursor:pointer;color:var(--text);padding:0;
+            transition:background .3s,color .3s,transform .15s;
+        }
+        #themeToggle:hover{transform:scale(1.08)}
+        #themeToggle:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px}
+        #themeToggle svg{width:18px;height:18px;display:block}
+
+        @media(max-width:600px){
+            .card{padding:2rem 1.4rem;border-radius:12px}
+            nav.links{font-size:.82rem}
+            .page-btn{padding:.35rem .75rem;min-height:36px;font-size:.79rem}
+            .panel p{font-size:.81rem}
+            #themeToggle{top:.7rem;right:.7rem;width:40px;height:40px}
+        }
+
+        @media(prefers-reduced-motion:reduce){
+            .card{animation:none!important;opacity:1!important}
+            *,*::before,*::after{
+                transition-duration:.01ms!important;
+                animation-duration:.01ms!important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg" aria-hidden="true"></canvas>
+
+    <button id="themeToggle" type="button" aria-label="Toggle dark and light theme"></button>
+
+    <div class="wrap">
+        <main class="card">
+            <h1 class="name">Zheye Song</h1>
+            <p class="title">B.S. Student, Mathematics &amp; Applied Mathematics — Fudan University</p>
+            <p class="interests">Interests: Causal Inference • Random Matrix Theory • Machine Learning for Public Health</p>
+            <nav class="links" aria-label="Quick links">
+                <a href="#">Publications</a>
+                <span class="sep" aria-hidden="true">|</span>
+                <!-- To enable the CV link, place cv.pdf at the repo root so it is accessible at /cv.pdf. -->
+                <a href="/cv.pdf">CV</a>
+                <span class="sep" aria-hidden="true">|</span>
+                <a href="https://github.com/zheyesong" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <span class="sep" aria-hidden="true">|</span>
+                <a href="mailto:zheye.song@example.com">Email</a>
+            </nav>
+            <div class="page-nav" role="tablist" aria-label="Site sections">
+                <button id="tab-about" class="page-btn active" type="button" data-panel="about" role="tab" aria-controls="panel-about" aria-selected="true">About</button>
+                <button id="tab-blog" class="page-btn" type="button" data-panel="blog" role="tab" aria-controls="panel-blog" aria-selected="false">Blog</button>
+                <button id="tab-notebook" class="page-btn" type="button" data-panel="notebook" role="tab" aria-controls="panel-notebook" aria-selected="false">Notebook</button>
+            </div>
+            <div class="panels">
+                <section id="panel-about" class="panel active" role="region" aria-labelledby="tab-about">
+                    <h2>About</h2>
+                    <p>I am an undergraduate student focusing on probability, inference, and computational methods, with a growing interest in mathematically grounded ML for public health applications.</p>
+                </section>
+                <section id="panel-blog" class="panel" role="region" aria-labelledby="tab-blog">
+                    <h2>Blog</h2>
+                    <p>Notes on papers, course takeaways, and short essays are collected here. I mainly write about causal ideas, asymptotic thinking, and clean problem-solving workflows.</p>
+                </section>
+                <section id="panel-notebook" class="panel" role="region" aria-labelledby="tab-notebook">
+                    <h2>Notebook</h2>
+                    <p>Working drafts, derivation snippets, and experimental logs. This section will host compact research notebooks and reproducible mini-project entries.</p>
+                </section>
+            </div>
+            <p class="foot">Last updated: 2026</p>
+        </main>
+    </div>
+
+    <script>
+    (() => {
+        'use strict';
+
+        /* ═══════════════════════════════════════════════════
+           SVG Icons
+           ═══════════════════════════════════════════════════ */
+        const ICO_SUN  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+        const ICO_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+        /* ═══════════════════════════════════════════════════
+           Theme
+           ═══════════════════════════════════════════════════ */
+        const html    = document.documentElement;
+        const tglBtn  = document.getElementById('themeToggle');
+        let theme     = 'light';
+        try { theme = localStorage.getItem('theme') || 'light'; } catch (_) {}
+
+        const panelBtns = Array.from(document.querySelectorAll('.page-btn'));
+        const panels    = Array.from(document.querySelectorAll('.panel'));
+        let activePanel = 'about';
+        try { activePanel = localStorage.getItem('activePanel') || 'about'; } catch (_) {}
+
+        function setActivePanel(id) {
+            const target = panelBtns.some(btn => btn.dataset.panel === id) ? id : 'about';
+            panelBtns.forEach(btn => {
+                const on = btn.dataset.panel === target;
+                btn.classList.toggle('active', on);
+                btn.setAttribute('aria-selected', on ? 'true' : 'false');
+            });
+            panels.forEach(panel => panel.classList.toggle('active', panel.id === 'panel-' + target));
+            activePanel = target;
+            try { localStorage.setItem('activePanel', activePanel); } catch (_) {}
+        }
+
+        function applyTheme(t, doClear) {
+            theme = t;
+            html.setAttribute('data-theme', t);
+            tglBtn.innerHTML = t === 'dark' ? ICO_SUN : ICO_MOON;
+            try { localStorage.setItem('theme', t); } catch (_) {}
+            if (doClear && W) { fullClear(); if (reduced) drawStatic(); }
+        }
+        tglBtn.addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark', true));
+
+        /* ═══════════════════════════════════════════════════
+           Canvas
+           ═══════════════════════════════════════════════════ */
+        const cvs = document.getElementById('bg');
+        const ctx = cvs.getContext('2d');
+        let W = 0, H = 0, dpr = 1, cx = 0, cy = 0, reach = 1;
+
+        function sizeCanvas() {
+            dpr = window.devicePixelRatio || 1;
+            W = window.innerWidth;
+            H = window.innerHeight;
+            cvs.width  = W * dpr;
+            cvs.height = H * dpr;
+            cvs.style.width  = W + 'px';
+            cvs.style.height = H + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            cx = W * 0.5;
+            cy = H * 0.5;
+            reach = Math.hypot(W, H) * 0.62;
+        }
+
+        function fullClear() {
+            ctx.globalAlpha = 1;
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = theme === 'dark' ? '#050505' : '#F7F3E8';
+            ctx.fillRect(0, 0, W, H);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           Reduced Motion
+           ═══════════════════════════════════════════════════ */
+        const mqRM  = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let reduced = mqRM.matches;
+        mqRM.addEventListener('change', e => {
+            reduced = e.matches;
+            if (reduced) drawStatic(); else fullClear();
+        });
+
+        function drawStatic() {
+            fullClear();
+            const r = Math.max(W, H) * 0.45;
+            const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+            if (theme === 'dark') {
+                g.addColorStop(0, 'rgba(0,255,65,0.12)');
+                g.addColorStop(1, 'rgba(5,5,5,0)');
+            } else {
+                g.addColorStop(0, 'rgba(255,180,0,0.12)');
+                g.addColorStop(1, 'rgba(247,243,232,0)');
+            }
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, W, H);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           Performance Scaling
+           ═══════════════════════════════════════════════════ */
+        const mob = () => W < 600;
+        let MAX_P, ORIG_MAX, spawn, origSpawn;
+
+        function calcLimits() {
+            if (mob()) {
+                MAX_P = 800; spawn = 5;
+            } else {
+                MAX_P  = Math.min(2500, Math.max(1200, (W * H / 820) | 0));
+                spawn  = Math.min(12, Math.max(6, (MAX_P / 180) | 0));
+            }
+            ORIG_MAX = MAX_P; origSpawn = spawn;
+        }
+
+        let fpsCnt = 0, fpsT = 0, fps = 60;
+        function tickFps(now) {
+            fpsCnt++;
+            if (now - fpsT >= 1000) {
+                fps = fpsCnt; fpsCnt = 0; fpsT = now;
+                if (fps < 28) {
+                    spawn = Math.max(1, spawn - 2);
+                    MAX_P = Math.max(200, MAX_P - 150);
+                } else if (fps > 50 && MAX_P < ORIG_MAX) {
+                    spawn = Math.min(origSpawn, spawn + 1);
+                    MAX_P = Math.min(ORIG_MAX, MAX_P + 80);
+                }
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+           Mouse / Touch
+           ═══════════════════════════════════════════════════ */
+        const ms = { x: -1e4, y: -1e4, on: false };
+        window.addEventListener('mousemove',  e => { ms.x = e.clientX; ms.y = e.clientY; ms.on = true; });
+        window.addEventListener('mouseleave', () => { ms.on = false; });
+        window.addEventListener('touchmove',  e => {
+            if (e.touches.length) { ms.x = e.touches[0].clientX; ms.y = e.touches[0].clientY; ms.on = true; }
+        }, { passive: true });
+        window.addEventListener('touchend', () => { ms.on = false; });
+
+        /* ═══════════════════════════════════════════════════
+           Particle Pool  (pre-allocated, compact array)
+           ═══════════════════════════════════════════════════ */
+        const POOL = 3200;
+        const P    = new Array(POOL);
+        for (let i = 0; i < POOL; i++) {
+            P[i] = {
+                x:0,y:0, px:0,py:0, vx:0,vy:0,
+                cu:0, age:0, life:0, d:0,
+                r:0, g:0, b:0, cs:''
+            };
+        }
+        let n = 0;                         // alive in [0..n)
+
+        /* ── colour helper ── */
+        function paintColor(p) {
+            const t = Math.random();
+            if (theme === 'dark') {
+                if (t < 0.74) {
+                    const s = t / 0.74;      // #00FF41 -> #008F11
+                    p.r = 0;
+                    p.g = (255 - s * 112) | 0;
+                    p.b = (65 - s * 48) | 0;
+                } else {
+                    const s = (t - 0.74) / 0.26; // bright mint accent for visibility
+                    p.r = 0;
+                    p.g = (215 + s * 40) | 0;
+                    p.b = (110 + s * 130) | 0;
+                }
+            } else {
+                if (t < 0.55) {              // gold → orange
+                    const s = t / 0.55;
+                    p.r = 255; p.g = (204 - s * 64) | 0; p.b = 0;
+                } else if (t < 0.85) {       // orange → red-orange
+                    const s = (t - 0.55) / 0.30;
+                    p.r = 255; p.g = (140 - s * 71) | 0; p.b = 0;
+                } else {                     // deep red-orange
+                    const s = (t - 0.85) / 0.15;
+                    p.r = 255; p.g = (69 - s * 26) | 0; p.b = (s * 18) | 0;
+                }
+            }
+            p.cs = 'rgb(' + p.r + ',' + p.g + ',' + p.b + ')';
+        }
+
+        /* ── spawn ── */
+        function emit() {
+            if (n >= POOL || n >= MAX_P) return;
+            const p   = P[n];
+            const ang = Math.random() * 6.2832;
+            const dep = Math.random();
+            const spd = 1.1 + dep * 1.35 + Math.random() * 3.2;  // stronger initial burst
+            let   cu  = (Math.random() - 0.5) * 0.16;
+            if (Math.abs(cu) < 0.018) cu = cu >= 0 ? 0.02 : -0.02;
+
+            p.x = cx; p.y = cy; p.px = cx; p.py = cy;
+            p.vx   = Math.cos(ang) * spd;
+            p.vy   = Math.sin(ang) * spd;
+            p.cu   = cu;
+            p.age  = 0;
+            p.life = 160 + (Math.random() * 340) | 0;
+            p.d    = dep;
+            paintColor(p);
+            n++;
+        }
+
+        /* ── physics constants ── */
+        const FRIC   = 0.996;
+        const OUTF   = 0.018;
+        const SWIRL  = 0.022;
+        const MR     = 120;
+        const MR2    = MR * MR;
+        const MSTR   = 0.1;
+
+        /* ═══════════════════════════════════════════════════
+           Main Loop
+           ═══════════════════════════════════════════════════ */
+        ctx.lineCap = 'round';
+
+        function frame(now) {
+            requestAnimationFrame(frame);
+            if (reduced) return;                    // static fallback already drawn
+            tickFps(now);
+
+            const dark = theme === 'dark';
+            const isMob = mob();
+
+            /* 1 ─ Fade overlay ─────────────────────────── */
+            ctx.globalAlpha = 1;
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = dark ? 'rgba(5,5,5,0.065)' : 'rgba(247,243,232,0.086)';
+            ctx.fillRect(0, 0, W, H);
+
+            /* 2 ─ Spawn ────────────────────────────────── */
+            const burst = n < (MAX_P * 0.36) ? (mob() ? 1 : 4) : 0;
+            const toSpawn = Math.min(spawn + burst, MAX_P - n);
+            for (let s = 0; s < toSpawn; s++) emit();
+
+            /* 3 ─ Composite for trails ─────────────────── */
+            ctx.globalCompositeOperation = dark ? 'screen' : 'source-over';
+
+            const mOn = ms.on, mx = ms.x, my = ms.y;
+
+            /* 4 ─ Update + Draw (compact swap-remove) ──── */
+            for (let i = 0; i < n; ) {
+                const p = P[i];
+
+                /* age check */
+                p.age++;
+                if (p.age >= p.life) {
+                    n--;
+                    P[i] = P[n]; P[n] = p;
+                    continue;
+                }
+
+                /* curvature rotation */
+                const co = Math.cos(p.cu), si = Math.sin(p.cu);
+                const nvx = p.vx * co - p.vy * si;
+                const nvy = p.vx * si + p.vy * co;
+                const ageRatio = p.age / p.life;
+                const drag = FRIC - ageRatio * 0.0046; // slow down as particle ages
+                p.vx = nvx * drag;
+                p.vy = nvy * drag;
+
+                /* organic curvature drift */
+                p.cu += (Math.random() - 0.5) * (0.004 + (1 - p.d) * 0.0028);
+                p.cu *= 0.9996;
+
+                /* outward + tangential flow to expand coverage across viewport */
+                const ox = p.x - cx, oy = p.y - cy;
+                const r2 = ox * ox + oy * oy;
+                if (r2 > 0.3) {
+                    const r = Math.sqrt(r2);
+                    const invR = 1 / r;
+                    const rn = Math.min(1, r / reach);
+                    const of = OUTF * (1 - rn * 0.55) * (0.62 + p.d * 0.88);
+                    p.vx += ox * invR * of;
+                    p.vy += oy * invR * of;
+                    const sf = SWIRL * (p.cu >= 0 ? 1 : -1) * (0.28 + (1 - rn) * 0.72);
+                    p.vx += -oy * invR * sf;
+                    p.vy += ox * invR * sf;
+                }
+
+                /* mouse repulsion */
+                if (mOn) {
+                    const dx = p.x - mx, dy = p.y - my;
+                    const d2 = dx * dx + dy * dy;
+                    if (d2 < MR2 && d2 > 1) {
+                        const d = Math.sqrt(d2);
+                        const f = (MR - d) / MR * MSTR;
+                        p.vx += dx / d * f;
+                        p.vy += dy / d * f;
+                    }
+                }
+
+                /* move */
+                p.px = p.x; p.py = p.y;
+                p.x += p.vx; p.y += p.vy;
+
+                /* off-screen cull */
+                if (p.x < -120 || p.x > W + 120 || p.y < -120 || p.y > H + 120) { i++; continue; }
+
+                /* alpha (depth + age + fade-in) */
+                const prog = p.age / p.life;
+                let al = (1 - prog);
+                al *= dark
+                    ? (0.12 + 0.52 * p.d)       // dark brighter for visibility
+                    : (0.10 + 0.52 * p.d);       // light: 0.10-0.62
+                if (prog < 0.06) al *= prog / 0.06;
+                if (al > 0.88) al = 0.88;
+                if (al < 0.003) { i++; continue; }
+
+                /* line width (depth + mobile boost) */
+                const lw = (dark ? 0.32 : 0.24) + p.d * (isMob ? 1.45 : dark ? 1.02 : 0.86);
+
+                /* draw trail segment */
+                ctx.globalAlpha = al;
+                ctx.lineWidth   = lw;
+                ctx.strokeStyle = p.cs;
+                ctx.beginPath();
+                ctx.moveTo(p.px, p.py);
+                ctx.lineTo(p.x, p.y);
+                ctx.stroke();
+
+                i++;
+            }
+
+            /* 5 ─ Subtle centre glow ───────────────────── */
+            ctx.globalAlpha = 1;
+            ctx.globalCompositeOperation = dark ? 'screen' : 'source-over';
+            const gr = isMob ? 32 : 48;
+            const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr);
+            if (dark) {
+                grd.addColorStop(0, 'rgba(0,255,65,0.055)');
+                grd.addColorStop(1, 'rgba(0,255,65,0)');
+            } else {
+                grd.addColorStop(0, 'rgba(255,170,0,0.032)');
+                grd.addColorStop(1, 'rgba(255,170,0,0)');
+            }
+            ctx.fillStyle = grd;
+            ctx.fillRect(cx - gr, cy - gr, gr * 2, gr * 2);
+
+            /* reset */
+            ctx.globalAlpha = 1;
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        /* ═══════════════════════════════════════════════════
+           Init
+           ═══════════════════════════════════════════════════ */
+        function boot() {
+            sizeCanvas();
+            calcLimits();
+            applyTheme(theme, false);
+            setActivePanel(activePanel);
+            panelBtns.forEach(btn => {
+                btn.addEventListener('click', () => setActivePanel(btn.dataset.panel || 'about'));
+            });
+            fullClear();
+            if (reduced) drawStatic();
+            fpsT = performance.now();
+            requestAnimationFrame(frame);
+        }
+
+        window.addEventListener('resize', () => {
+            sizeCanvas();
+            calcLimits();
+            fullClear();
+            if (reduced) drawStatic();
+        });
+
+        boot();
+    })();
+    </script>
+
+
+</body></html>
