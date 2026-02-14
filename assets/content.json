@@ -1,0 +1,187 @@
+{
+  "home": {
+    "name": "Zheye Song",
+    "title": "B.S. Student, Mathematics & Applied Mathematics — Fudan University",
+    "interests": "Interests: Causality (Inference and Reasoning) • Random Matrix Theory •Machine Learning",
+    "quickLinks": [
+      {
+        "label": "Publications",
+        "href": "#"
+      },
+      {
+        "label": "CV",
+        "href": "cv.pdf",
+        "comment": "<!-- To enable the CV link, place cv.pdf at the repo root so it is accessible at cv.pdf. -->"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/zheyesong",
+        "external": true
+      },
+      {
+        "label": "Email",
+        "href": "mailto:song_zheye@163.com"
+      }
+    ],
+    "buttons": [
+      {
+        "key": "about",
+        "label": "About",
+        "href": "about.html"
+      },
+      {
+        "key": "blog",
+        "label": "Blog",
+        "href": "blog.html"
+      },
+      {
+        "key": "notebook",
+        "label": "Notebook",
+        "href": "notebook.html"
+      }
+    ],
+    "previews": {
+      "about": {
+        "key": "about",
+        "title": "About",
+        "text": "I am an undergraduate student focusing on probability, inference, and computational methods, with a growing interest in mathematically grounded ML across diverse applications.",
+        "href": "about.html",
+        "showLink": true
+      },
+      "blog": {
+        "key": "blog",
+        "title": "Blog",
+        "text": "Notes on papers, course takeaways, and short essays are collected here. I mainly write about causal ideas, asymptotic thinking, and clean problem-solving workflows.",
+        "href": "blog.html",
+        "showLink": false
+      },
+      "notebook": {
+        "key": "notebook",
+        "title": "Notebook",
+        "text": "Working drafts, derivation snippets, and experiment logs are organized for future expansion, with room for multiple projects and evolving ideas.",
+        "href": "notebook.html",
+        "showLink": false
+      }
+    },
+    "previewOrder": [
+      "about",
+      "blog",
+      "notebook"
+    ],
+    "lastUpdated": "Last updated: 2026"
+  },
+  "about": {
+    "title": "About",
+    "intro": "I am an undergraduate student focusing on probability, inference, and computational methods, with a growing interest in mathematically grounded machine learning across diverse applications.",
+    "sections": [
+      {
+        "heading": "Current Focus",
+        "list": [
+          "Causal inference: identification, robustness, and practical model validation.",
+          "Random matrix theory: asymptotic intuition for high-dimensional systems.",
+          "Public health ML: interpretable methods with strong statistical assumptions."
+        ]
+      },
+      {
+        "heading": "How I Work",
+        "paragraph": "I prefer a cycle of theorem-level understanding, implementation-level stress tests, and communication-level simplification. My goal is to keep models both useful and defensible."
+      },
+      {
+        "heading": "Roadmap",
+        "paragraph": "This page is designed as a long-form profile area. You can keep extending it with coursework notes, projects, publications, and future research plans while preserving the same visual style."
+      }
+    ],
+    "back": {
+      "label": "Back to home",
+      "href": "index.html"
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "intro": "This page keeps longer-form writing in one place, with a built-in index so you can continuously add new posts without changing the layout.",
+    "directoryLabel": "Blog directory",
+    "directoryTitle": "Directory",
+    "toc": [
+      {
+        "href": "#post-causal",
+        "text": "Causal Estimation Under Practical Constraints"
+      },
+      {
+        "href": "#post-rmt",
+        "text": "Random Matrix Intuition for Learning Systems"
+      },
+      {
+        "href": "#post-health",
+        "text": "Machine Learning for Public Health: What Matters First"
+      }
+    ],
+    "entries": [
+      {
+        "id": "post-causal",
+        "title": "Causal Estimation Under Practical Constraints",
+        "meta": "Status: Draft",
+        "text": "A running note on identification assumptions, sensitivity checks, and decision-focused interpretation. This slot is ready for a full-length article."
+      },
+      {
+        "id": "post-rmt",
+        "title": "Random Matrix Intuition for Learning Systems",
+        "meta": "Status: Draft",
+        "text": "Planned content includes eigenvalue concentration, noise separation, and what these ideas imply for model stability in high dimensions."
+      },
+      {
+        "id": "post-health",
+        "title": "Machine Learning for Public Health: What Matters First",
+        "meta": "Status: Draft",
+        "text": "A practical framework balancing calibration, fairness, interpretability, and domain constraints for health-related machine learning systems."
+      }
+    ],
+    "back": {
+      "label": "Back to home",
+      "href": "index.html"
+    }
+  },
+  "notebook": {
+    "title": "Notebook",
+    "intro": "This page is a structured lab notebook for short technical fragments, derivations, and experiment logs, with an index optimized for many entries.",
+    "directoryLabel": "Notebook directory",
+    "directoryTitle": "Directory",
+    "toc": [
+      {
+        "href": "#note-identification",
+        "text": "Identification Checklist for Causal Designs"
+      },
+      {
+        "href": "#note-spectrum",
+        "text": "Spectrum Diagnostics for High-Dimensional Covariance"
+      },
+      {
+        "href": "#note-eval",
+        "text": "Evaluation Protocol for Health Prediction Tasks"
+      }
+    ],
+    "entries": [
+      {
+        "id": "note-identification",
+        "title": "Identification Checklist for Causal Designs",
+        "meta": "Type: Concept note",
+        "text": "A compact list covering positivity, ignorability assumptions, overlap inspection, and practical sanity checks before model fitting."
+      },
+      {
+        "id": "note-spectrum",
+        "title": "Spectrum Diagnostics for High-Dimensional Covariance",
+        "meta": "Type: Derivation note",
+        "text": "Working notes on separating signal spikes from noise bulk, with reminders for sample-size effects and numerical stability checks."
+      },
+      {
+        "id": "note-eval",
+        "title": "Evaluation Protocol for Health Prediction Tasks",
+        "meta": "Type: Workflow note",
+        "text": "A practical protocol template: data split policy, calibration plots, subgroup metrics, and documentation rules for reproducibility."
+      }
+    ],
+    "back": {
+      "label": "Back to home",
+      "href": "index.html"
+    }
+  }
+}
