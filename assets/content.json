@@ -10,8 +10,8 @@
       },
       {
         "label": "CV",
-        "href": "cv.pdf",
-        "comment": "<!-- To enable the CV link, place cv.pdf at the repo root so it is accessible at cv.pdf. -->"
+        "href": "/cv.pdf",
+        "comment": "<!-- To enable the CV link, place cv.pdf at the repo root so it is accessible at /cv.pdf. -->"
       },
       {
         "label": "GitHub",
@@ -19,8 +19,10 @@
         "external": true
       },
       {
-        "label": "Email",
-        "href": "mailto:song_zheye@163.com"
+        "label": "Email Me",
+        "obfuscated": true,
+        "userEnc": "c29uZ196aGV5ZQ==",
+        "domainEnc": "MTYzLmNvbQ=="
       }
     ],
     "buttons": [
@@ -98,7 +100,7 @@
   },
   "blog": {
     "title": "Blog",
-    "intro": "This page keeps longer-form writing in one place, with a built-in index so you can continuously add new posts without changing the layout.",
+    "introMarkdown": "This page keeps longer-form writing in one place, with a built-in index so you can continuously add new posts without changing the layout.\n\nWrite directly in **Markdown** and let the page render it automatically.",
     "directoryLabel": "Blog directory",
     "directoryTitle": "Directory",
     "toc": [
@@ -120,19 +122,19 @@
         "id": "post-causal",
         "title": "Causal Estimation Under Practical Constraints",
         "meta": "Status: Draft",
-        "text": "A running note on identification assumptions, sensitivity checks, and decision-focused interpretation. This slot is ready for a full-length article."
+        "markdown": "A running note on identification assumptions, sensitivity checks, and decision-focused interpretation.\n\n- Clarify target estimand before modeling\n- Audit overlap and positivity\n- Document sensitivity bounds for hidden bias"
       },
       {
         "id": "post-rmt",
         "title": "Random Matrix Intuition for Learning Systems",
         "meta": "Status: Draft",
-        "text": "Planned content includes eigenvalue concentration, noise separation, and what these ideas imply for model stability in high dimensions."
+        "markdown": "Planned content includes eigenvalue concentration, noise separation, and what these ideas imply for model stability in high dimensions.\n\n`TODO:` add simulation figures and finite-sample caveats."
       },
       {
         "id": "post-health",
         "title": "Machine Learning for Public Health: What Matters First",
         "meta": "Status: Draft",
-        "text": "A practical framework balancing calibration, fairness, interpretability, and domain constraints for health-related machine learning systems."
+        "markdown": "A practical framework balancing calibration, fairness, interpretability, and domain constraints for health-related machine learning systems.\n\n1. Define deployment context\n2. Evaluate subgroup reliability\n3. Track drift and recalibration"
       }
     ],
     "back": {
@@ -142,7 +144,7 @@
   },
   "notebook": {
     "title": "Notebook",
-    "intro": "This page is a structured lab notebook for short technical fragments, derivations, and experiment logs, with an index optimized for many entries.",
+    "introMarkdown": "This page is a structured lab notebook for short technical fragments, derivations, and experiment logs, with an index optimized for many entries.\n\nUse it as a **Markdown-first** research scratchpad.",
     "directoryLabel": "Notebook directory",
     "directoryTitle": "Directory",
     "toc": [
@@ -164,19 +166,19 @@
         "id": "note-identification",
         "title": "Identification Checklist for Causal Designs",
         "meta": "Type: Concept note",
-        "text": "A compact list covering positivity, ignorability assumptions, overlap inspection, and practical sanity checks before model fitting."
+        "markdown": "A compact list covering positivity, ignorability assumptions, overlap inspection, and practical sanity checks before model fitting.\n\n- Verify overlap diagnostics\n- Track treatment support holes\n- Log exclusion decisions"
       },
       {
         "id": "note-spectrum",
         "title": "Spectrum Diagnostics for High-Dimensional Covariance",
         "meta": "Type: Derivation note",
-        "text": "Working notes on separating signal spikes from noise bulk, with reminders for sample-size effects and numerical stability checks."
+        "markdown": "Working notes on separating signal spikes from noise bulk, with reminders for sample-size effects and numerical stability checks.\n\n`lambda_max` behavior is sensitive to scaling conventions."
       },
       {
         "id": "note-eval",
         "title": "Evaluation Protocol for Health Prediction Tasks",
         "meta": "Type: Workflow note",
-        "text": "A practical protocol template: data split policy, calibration plots, subgroup metrics, and documentation rules for reproducibility."
+        "markdown": "A practical protocol template: data split policy, calibration plots, subgroup metrics, and documentation rules for reproducibility.\n\n- Pre-register metric thresholds\n- Keep audit trail for feature changes"
       }
     ],
     "back": {
