@@ -1,0 +1,233 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860" role="img" aria-labelledby="title desc">
+  <title id="title">Light theme particle gold palette preview</title>
+  <desc id="desc">Four static palette previews for a light background particle effect: Honey Gold, Champagne Gold, Antique Gold, and Solar Gold.</desc>
+  <defs>
+    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="wideGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="clipA"><rect x="50" y="80" width="535" height="330" rx="8"/></clipPath>
+    <clipPath id="clipB"><rect x="615" y="80" width="535" height="330" rx="8"/></clipPath>
+    <clipPath id="clipC"><rect x="50" y="455" width="535" height="330" rx="8"/></clipPath>
+    <clipPath id="clipD"><rect x="615" y="455" width="535" height="330" rx="8"/></clipPath>
+    <radialGradient id="panelSheenA" cx="48%" cy="45%" r="70%">
+      <stop offset="0" stop-color="#FFE6A6" stop-opacity=".32"/>
+      <stop offset=".55" stop-color="#FFD166" stop-opacity=".14"/>
+      <stop offset="1" stop-color="#F7F3E8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="panelSheenB" cx="48%" cy="45%" r="70%">
+      <stop offset="0" stop-color="#FFF1C6" stop-opacity=".34"/>
+      <stop offset=".56" stop-color="#E9C45C" stop-opacity=".13"/>
+      <stop offset="1" stop-color="#F7F3E8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="panelSheenC" cx="48%" cy="45%" r="70%">
+      <stop offset="0" stop-color="#FFD984" stop-opacity=".35"/>
+      <stop offset=".55" stop-color="#B87A16" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#F7F3E8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="panelSheenD" cx="48%" cy="45%" r="70%">
+      <stop offset="0" stop-color="#FFE96F" stop-opacity=".42"/>
+      <stop offset=".55" stop-color="#FFB000" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#F7F3E8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="trailA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF7D1"/>
+      <stop offset=".42" stop-color="#FFD166"/>
+      <stop offset="1" stop-color="#C98508"/>
+    </linearGradient>
+    <linearGradient id="trailB" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF9DD"/>
+      <stop offset=".46" stop-color="#F4D36D"/>
+      <stop offset="1" stop-color="#A87914"/>
+    </linearGradient>
+    <linearGradient id="trailC" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFE7A8"/>
+      <stop offset=".43" stop-color="#D79A20"/>
+      <stop offset="1" stop-color="#80500F"/>
+    </linearGradient>
+    <linearGradient id="trailD" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF2A8"/>
+      <stop offset=".40" stop-color="#FFC338"/>
+      <stop offset="1" stop-color="#E98200"/>
+    </linearGradient>
+    <style>
+      .page-bg{fill:#f7f3e8}
+      .panel{fill:#f7f3e8;stroke:rgba(0,0,0,.08);stroke-width:1}
+      .glass{fill:rgba(255,255,255,.32);stroke:rgba(0,0,0,.07);stroke-width:1}
+      .label{font:700 20px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#17120a}
+      .sub{font:500 13px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#5c5547}
+      .chipText{font:600 11px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#221a0c}
+      .mockTitle{font:700 18px Georgia,"Times New Roman",serif;fill:#111}
+      .mockText{font:500 11px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#5b554a}
+      .fine{font:600 10px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#6a604f}
+      .trail{fill:none;stroke-linecap:round;filter:url(#softGlow)}
+      .veil{opacity:.75}
+      .center{filter:url(#softGlow)}
+      .bloom{filter:url(#wideGlow)}
+    </style>
+  </defs>
+
+  <rect class="page-bg" width="1200" height="860"/>
+  <text x="50" y="43" class="label">Light Particle Gold Options</text>
+  <text x="50" y="63" class="sub">Static preview, matched to the current warm paper background and glass panels.</text>
+
+  <g clip-path="url(#clipA)">
+    <rect x="50" y="80" width="535" height="330" class="panel"/>
+    <rect x="50" y="80" width="535" height="330" fill="url(#panelSheenA)" class="veil"/>
+    <circle cx="318" cy="245" r="142" fill="#FFD166" opacity=".11" class="bloom"/>
+    <circle cx="138" cy="138" r="96" fill="#E8A51D" opacity=".12" class="bloom"/>
+    <circle cx="508" cy="340" r="118" fill="#C98508" opacity=".08" class="bloom"/>
+    <g stroke="url(#trailA)" class="trail">
+      <path d="M318 245 C286 212 241 190 204 150" stroke-width="1.15" opacity=".58"/>
+      <path d="M318 245 C357 210 397 185 451 139" stroke-width="1.3" opacity=".70"/>
+      <path d="M318 245 C372 242 421 256 506 266" stroke-width=".95" opacity=".48"/>
+      <path d="M318 245 C359 284 406 319 487 365" stroke-width="1.05" opacity=".58"/>
+      <path d="M318 245 C290 298 252 328 193 377" stroke-width=".9" opacity=".44"/>
+      <path d="M318 245 C246 251 201 252 113 283" stroke-width="1.45" opacity=".64"/>
+      <path d="M318 245 C294 200 266 166 242 106" stroke-width=".8" opacity=".38"/>
+      <path d="M318 245 C340 188 360 151 391 95" stroke-width=".95" opacity=".54"/>
+      <path d="M318 245 C397 217 447 204 568 190" stroke-width="1.2" opacity=".46"/>
+      <path d="M318 245 C382 304 435 334 554 386" stroke-width="1.55" opacity=".55"/>
+      <path d="M318 245 C285 323 252 357 213 430" stroke-width="1.15" opacity=".50"/>
+      <path d="M318 245 C232 214 177 197 74 165" stroke-width="1.25" opacity=".44"/>
+      <path d="M318 245 C260 286 212 304 139 351" stroke-width="1" opacity=".52"/>
+      <path d="M318 245 C376 169 417 136 487 84" stroke-width=".85" opacity=".34"/>
+    </g>
+    <circle cx="318" cy="245" r="18" fill="#FFF4C4" opacity=".24"/>
+    <circle cx="318" cy="245" r="5" fill="#FFD166" opacity=".78" class="center"/>
+    <rect x="98" y="128" width="178" height="92" rx="8" class="glass"/>
+    <text x="116" y="163" class="mockTitle">Zheye Song</text>
+    <text x="116" y="185" class="mockText">Research, notes, and writing</text>
+    <rect x="116" y="199" width="54" height="8" rx="4" fill="#FFD166" opacity=".38"/>
+    <rect x="178" y="199" width="38" height="8" rx="4" fill="#C98508" opacity=".24"/>
+  </g>
+  <rect x="50" y="80" width="535" height="330" rx="8" fill="none" stroke="rgba(0,0,0,.08)"/>
+  <text x="72" y="110" class="label">A. Honey Gold</text>
+  <text x="72" y="130" class="sub">Balanced, warmer than current, still soft.</text>
+  <rect x="72" y="365" width="74" height="22" rx="8" fill="#FFF7D1" stroke="rgba(0,0,0,.08)"/><text x="82" y="380" class="chipText">FFF7D1</text>
+  <rect x="152" y="365" width="74" height="22" rx="8" fill="#FFD166" stroke="rgba(0,0,0,.08)"/><text x="162" y="380" class="chipText">FFD166</text>
+  <rect x="232" y="365" width="74" height="22" rx="8" fill="#C98508" stroke="rgba(0,0,0,.08)"/><text x="242" y="380" class="chipText">C98508</text>
+  <text x="330" y="380" class="fine">recommended if you want elegance first</text>
+
+  <g clip-path="url(#clipB)">
+    <rect x="615" y="80" width="535" height="330" class="panel"/>
+    <rect x="615" y="80" width="535" height="330" fill="url(#panelSheenB)" class="veil"/>
+    <circle cx="882" cy="245" r="150" fill="#F4D36D" opacity=".10" class="bloom"/>
+    <circle cx="697" cy="345" r="110" fill="#D6AF3E" opacity=".09" class="bloom"/>
+    <circle cx="1046" cy="143" r="98" fill="#A87914" opacity=".08" class="bloom"/>
+    <g stroke="url(#trailB)" class="trail">
+      <path d="M882 245 C835 219 801 199 746 163" stroke-width="1" opacity=".46"/>
+      <path d="M882 245 C921 205 962 180 1030 126" stroke-width="1.05" opacity=".58"/>
+      <path d="M882 245 C946 240 994 253 1114 270" stroke-width=".88" opacity=".42"/>
+      <path d="M882 245 C932 286 982 319 1088 365" stroke-width="1.05" opacity=".48"/>
+      <path d="M882 245 C849 297 810 330 748 383" stroke-width=".88" opacity=".42"/>
+      <path d="M882 245 C809 251 767 250 675 279" stroke-width="1.25" opacity=".52"/>
+      <path d="M882 245 C855 201 834 161 807 102" stroke-width=".75" opacity=".34"/>
+      <path d="M882 245 C903 190 928 152 958 96" stroke-width=".85" opacity=".44"/>
+      <path d="M882 245 C958 215 1006 203 1128 184" stroke-width="1.05" opacity=".40"/>
+      <path d="M882 245 C945 301 1000 333 1114 386" stroke-width="1.25" opacity=".44"/>
+      <path d="M882 245 C848 321 815 358 775 429" stroke-width="1" opacity=".42"/>
+      <path d="M882 245 C799 215 744 193 640 161" stroke-width="1.05" opacity=".38"/>
+      <path d="M882 245 C824 287 778 307 707 351" stroke-width=".9" opacity=".45"/>
+      <path d="M882 245 C938 171 982 136 1044 91" stroke-width=".72" opacity=".32"/>
+    </g>
+    <circle cx="882" cy="245" r="18" fill="#FFF9DD" opacity=".21"/>
+    <circle cx="882" cy="245" r="5" fill="#F4D36D" opacity=".72" class="center"/>
+    <rect x="663" y="128" width="178" height="92" rx="8" class="glass"/>
+    <text x="681" y="163" class="mockTitle">Zheye Song</text>
+    <text x="681" y="185" class="mockText">Research, notes, and writing</text>
+    <rect x="681" y="199" width="54" height="8" rx="4" fill="#F4D36D" opacity=".34"/>
+    <rect x="743" y="199" width="38" height="8" rx="4" fill="#A87914" opacity=".20"/>
+  </g>
+  <rect x="615" y="80" width="535" height="330" rx="8" fill="none" stroke="rgba(0,0,0,.08)"/>
+  <text x="637" y="110" class="label">B. Champagne Gold</text>
+  <text x="637" y="130" class="sub">Lightest and most polished, less orange.</text>
+  <rect x="637" y="365" width="74" height="22" rx="8" fill="#FFF9DD" stroke="rgba(0,0,0,.08)"/><text x="647" y="380" class="chipText">FFF9DD</text>
+  <rect x="717" y="365" width="74" height="22" rx="8" fill="#F4D36D" stroke="rgba(0,0,0,.08)"/><text x="727" y="380" class="chipText">F4D36D</text>
+  <rect x="797" y="365" width="74" height="22" rx="8" fill="#A87914" stroke="rgba(0,0,0,.08)"/><text x="807" y="380" class="chipText">A87914</text>
+  <text x="895" y="380" class="fine">subtle; safest for reading pages</text>
+
+  <g clip-path="url(#clipC)">
+    <rect x="50" y="455" width="535" height="330" class="panel"/>
+    <rect x="50" y="455" width="535" height="330" fill="url(#panelSheenC)" class="veil"/>
+    <circle cx="318" cy="620" r="152" fill="#D79A20" opacity=".13" class="bloom"/>
+    <circle cx="132" cy="548" r="92" fill="#80500F" opacity=".11" class="bloom"/>
+    <circle cx="496" cy="719" r="115" fill="#B87A16" opacity=".11" class="bloom"/>
+    <g stroke="url(#trailC)" class="trail">
+      <path d="M318 620 C278 591 240 566 197 529" stroke-width="1.25" opacity=".64"/>
+      <path d="M318 620 C357 579 398 556 455 512" stroke-width="1.45" opacity=".70"/>
+      <path d="M318 620 C376 616 422 629 511 639" stroke-width="1.05" opacity=".54"/>
+      <path d="M318 620 C359 662 407 694 492 741" stroke-width="1.25" opacity=".62"/>
+      <path d="M318 620 C290 673 252 704 193 753" stroke-width="1.05" opacity=".52"/>
+      <path d="M318 620 C245 626 198 628 106 657" stroke-width="1.55" opacity=".70"/>
+      <path d="M318 620 C292 573 266 540 242 480" stroke-width=".9" opacity=".44"/>
+      <path d="M318 620 C340 562 360 524 392 467" stroke-width="1.05" opacity=".58"/>
+      <path d="M318 620 C398 591 447 577 568 563" stroke-width="1.28" opacity=".52"/>
+      <path d="M318 620 C383 677 436 708 554 759" stroke-width="1.65" opacity=".64"/>
+      <path d="M318 620 C229 589 177 570 73 538" stroke-width="1.3" opacity=".52"/>
+      <path d="M318 620 C259 661 212 681 138 727" stroke-width="1.15" opacity=".60"/>
+      <path d="M318 620 C375 544 418 511 487 459" stroke-width=".9" opacity=".40"/>
+    </g>
+    <circle cx="318" cy="620" r="20" fill="#FFE7A8" opacity=".27"/>
+    <circle cx="318" cy="620" r="6" fill="#D79A20" opacity=".82" class="center"/>
+    <rect x="98" y="503" width="178" height="92" rx="8" class="glass"/>
+    <text x="116" y="538" class="mockTitle">Zheye Song</text>
+    <text x="116" y="560" class="mockText">Research, notes, and writing</text>
+    <rect x="116" y="574" width="54" height="8" rx="4" fill="#D79A20" opacity=".42"/>
+    <rect x="178" y="574" width="38" height="8" rx="4" fill="#80500F" opacity=".28"/>
+  </g>
+  <rect x="50" y="455" width="535" height="330" rx="8" fill="none" stroke="rgba(0,0,0,.08)"/>
+  <text x="72" y="485" class="label">C. Antique Gold</text>
+  <text x="72" y="505" class="sub">Most contrast; a deeper bronze-gold signal.</text>
+  <rect x="72" y="740" width="74" height="22" rx="8" fill="#FFE7A8" stroke="rgba(0,0,0,.08)"/><text x="82" y="755" class="chipText">FFE7A8</text>
+  <rect x="152" y="740" width="74" height="22" rx="8" fill="#D79A20" stroke="rgba(0,0,0,.08)"/><text x="162" y="755" class="chipText">D79A20</text>
+  <rect x="232" y="740" width="74" height="22" rx="8" fill="#80500F" stroke="rgba(0,0,0,.08)"/><text x="242" y="755" class="chipText">80500F</text>
+  <text x="330" y="755" class="fine">strongest visibility on pale screens</text>
+
+  <g clip-path="url(#clipD)">
+    <rect x="615" y="455" width="535" height="330" class="panel"/>
+    <rect x="615" y="455" width="535" height="330" fill="url(#panelSheenD)" class="veil"/>
+    <circle cx="882" cy="620" r="156" fill="#FFC338" opacity=".16" class="bloom"/>
+    <circle cx="697" cy="717" r="110" fill="#E98200" opacity=".12" class="bloom"/>
+    <circle cx="1047" cy="517" r="105" fill="#FFB000" opacity=".13" class="bloom"/>
+    <g stroke="url(#trailD)" class="trail">
+      <path d="M882 620 C836 591 801 571 746 535" stroke-width="1.35" opacity=".66"/>
+      <path d="M882 620 C921 579 962 555 1032 501" stroke-width="1.6" opacity=".76"/>
+      <path d="M882 620 C946 615 995 628 1115 645" stroke-width="1.05" opacity=".56"/>
+      <path d="M882 620 C932 661 982 694 1088 740" stroke-width="1.28" opacity=".62"/>
+      <path d="M882 620 C849 672 810 705 748 758" stroke-width="1.08" opacity=".54"/>
+      <path d="M882 620 C809 626 767 625 675 654" stroke-width="1.68" opacity=".72"/>
+      <path d="M882 620 C855 576 834 536 807 477" stroke-width=".95" opacity=".46"/>
+      <path d="M882 620 C903 565 928 527 959 471" stroke-width="1.05" opacity=".58"/>
+      <path d="M882 620 C958 590 1006 578 1128 559" stroke-width="1.35" opacity=".54"/>
+      <path d="M882 620 C945 676 1000 708 1114 761" stroke-width="1.75" opacity=".64"/>
+      <path d="M882 620 C799 590 744 568 640 536" stroke-width="1.4" opacity=".56"/>
+      <path d="M882 620 C824 662 778 682 707 726" stroke-width="1.2" opacity=".62"/>
+      <path d="M882 620 C938 546 982 511 1044 466" stroke-width=".95" opacity=".42"/>
+    </g>
+    <circle cx="882" cy="620" r="21" fill="#FFF2A8" opacity=".30"/>
+    <circle cx="882" cy="620" r="6" fill="#FFC338" opacity=".88" class="center"/>
+    <rect x="663" y="503" width="178" height="92" rx="8" class="glass"/>
+    <text x="681" y="538" class="mockTitle">Zheye Song</text>
+    <text x="681" y="560" class="mockText">Research, notes, and writing</text>
+    <rect x="681" y="574" width="54" height="8" rx="4" fill="#FFC338" opacity=".46"/>
+    <rect x="743" y="574" width="38" height="8" rx="4" fill="#E98200" opacity=".30"/>
+  </g>
+  <rect x="615" y="455" width="535" height="330" rx="8" fill="none" stroke="rgba(0,0,0,.08)"/>
+  <text x="637" y="485" class="label">D. Solar Gold</text>
+  <text x="637" y="505" class="sub">Brightest pulse; vivid but slightly louder.</text>
+  <rect x="637" y="740" width="74" height="22" rx="8" fill="#FFF2A8" stroke="rgba(0,0,0,.08)"/><text x="647" y="755" class="chipText">FFF2A8</text>
+  <rect x="717" y="740" width="74" height="22" rx="8" fill="#FFC338" stroke="rgba(0,0,0,.08)"/><text x="727" y="755" class="chipText">FFC338</text>
+  <rect x="797" y="740" width="74" height="22" rx="8" fill="#E98200" stroke="rgba(0,0,0,.08)"/><text x="807" y="755" class="chipText">E98200</text>
+  <text x="895" y="755" class="fine">best if the background should visibly shimmer</text>
+</svg>
