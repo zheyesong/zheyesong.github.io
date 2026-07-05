@@ -66,11 +66,23 @@ function getNavMarkup(site, activeKey) {
   }).join('\n                ');
 }
 
+function getDetailHeaderMarkup(site, activeKey, title, introHtml = '') {
+  return [
+    '<header class="detail-page-head">',
+    '    <div class="detail-page-copy">',
+    '        <h1>' + escapeHtml(title) + '</h1>',
+    introHtml ? '        <div class="detail-page-intro">' + introHtml + '</div>' : '',
+    '    </div>',
+    '    <nav class="site-nav" aria-label="Main pages">',
+    '        ' + getNavMarkup(site, activeKey),
+    '    </nav>',
+    '</header>'
+  ].filter(Boolean).join('\n');
+}
+
 function getAboutMarkup({ site, profile }) {
   const chunks = [];
   const about = profile.about;
-  chunks.push('<h1>' + escapeHtml(about.title) + '</h1>');
-  chunks.push('<p>' + escapeHtml(about.intro) + '</p>');
   about.sections.forEach(section => {
     chunks.push('<h2>' + escapeHtml(section.heading) + '</h2>');
     if (section.list) {
@@ -84,9 +96,7 @@ function getAboutMarkup({ site, profile }) {
 
   return [
     '<main class="detail-card">',
-    '    <nav class="site-nav" aria-label="Main pages">',
-    '        ' + getNavMarkup(site, 'about'),
-    '    </nav>',
+    getDetailHeaderMarkup(site, 'about', about.title, '<p>' + escapeHtml(about.intro) + '</p>'),
     '    <article class="content">',
     chunks.join('\n                '),
     '    </article>',
@@ -143,6 +153,12 @@ function renderReadingSourceBlock(entry) {
   ].filter(Boolean).join('\n');
 }
 
+function getReadingSortInitial(entry) {
+  const value = String(entry.sortKey || entry.authors[0] || entry.title || entry.slug || '').trim();
+  const match = value.match(/[A-Za-z0-9]/);
+  return match ? match[0].toUpperCase() : '#';
+}
+
 function getIndexedMarkup(key, page, entries, site) {
   if (collectionReaders[key]) return getCollectionDirectoryMarkup(key, page, entries, site);
 
@@ -164,12 +180,8 @@ function getIndexedMarkup(key, page, entries, site) {
 
   return [
     '<main class="detail-card">',
-    '    <nav class="site-nav" aria-label="Main pages">',
-    '        ' + getNavMarkup(site, key),
-    '    </nav>',
+    getDetailHeaderMarkup(site, key, page.title, renderPageIntro(page)),
     '    <article class="content">',
-    '        <h1>' + escapeHtml(page.title) + '</h1>',
-    renderPageIntro(page),
     '        <section class="toc" aria-label="' + escapeHtml(page.directoryLabel) + '">',
     '            <h2>' + escapeHtml(page.directoryTitle) + '</h2>',
     '            <ol>',
@@ -194,12 +206,16 @@ function getCollectionDirectoryMarkup(key, page, entries, site) {
       entry.tags.length ? 'Tags: ' + entry.tags.join(', ') : 'No tags'
     ].filter(Boolean).join(' | ');
     const sourceLink = key === 'reading' ? renderReadingSourceLink(entry) : '';
+    const readingMarker = key === 'reading'
+      ? '<span class="reading-index-letter" aria-hidden="true">' + escapeHtml(getReadingSortInitial(entry)) + '</span>'
+      : '';
+    const cardClass = 'collection-index-card blog-index-card' + (key === 'reading' ? ' reading-index-card' : '');
     return [
-      '<article id="' + escapeHtml(entry.id) + '" class="collection-index-card blog-index-card">',
+      '<article id="' + escapeHtml(entry.id) + '" class="' + cardClass + '">',
+      readingMarker ? '    ' + readingMarker : '',
       '    <a class="blog-index-link" href="' + escapeHtml(entry.href) + '" aria-describedby="' + infoId + '">',
       '        <span class="blog-index-title">' + escapeHtml(entry.title) + '</span>',
       meta ? '        <span class="blog-index-meta">' + escapeHtml(meta) + '</span>' : '',
-      key === 'reading' && entry.authors.length ? '        <span class="blog-index-meta">' + escapeHtml(entry.authors.join(', ')) + '</span>' : '',
       '    </a>',
       '    <div id="' + infoId + '" class="blog-hover-info" role="note">',
       '        <div class="blog-hover-inner">',
@@ -215,12 +231,8 @@ function getCollectionDirectoryMarkup(key, page, entries, site) {
 
   return [
     '<main class="detail-card">',
-    '    <nav class="site-nav" aria-label="Main pages">',
-    '        ' + getNavMarkup(site, key),
-    '    </nav>',
+    getDetailHeaderMarkup(site, key, page.title, renderPageIntro(page)),
     '    <article class="content collection-directory-content blog-directory-content">',
-    '        <h1>' + escapeHtml(page.title) + '</h1>',
-    renderPageIntro(page),
     '        <section class="blog-directory" aria-label="' + escapeHtml(page.directoryLabel) + '">',
     '                ' + entryHtml,
     '        </section>',
@@ -241,11 +253,8 @@ function getCollectionPostMarkup(data, key) {
     document.title = collection.label + ' Entry Not Found - Zheye Song';
     return [
       '<main class="detail-card">',
-      '    <nav class="site-nav" aria-label="Main pages">',
-      '        ' + getNavMarkup(site, key),
-      '    </nav>',
+      getDetailHeaderMarkup(site, key, 'Entry Not Found'),
       '    <article class="content collection-post-content blog-post-content">',
-      '        <h1>Entry Not Found</h1>',
       '        <p>The requested entry could not be found. It may be a draft or the URL may be outdated.</p>',
       '        <p><a href="' + collection.directoryFile + '">Back to ' + collection.label + ' directory</a></p>',
       '    </article>',
@@ -258,13 +267,8 @@ function getCollectionPostMarkup(data, key) {
 
   return [
     '<main class="detail-card">',
-    '    <nav class="site-nav" aria-label="Main pages">',
-    '        ' + getNavMarkup(site, key),
-    '    </nav>',
+    getDetailHeaderMarkup(site, key, entry.title, '<p class="reader-back"><a href="' + collection.directoryFile + '#' + escapeHtml(entry.id) + '">Back to ' + collection.label + ' directory</a></p>' + (meta ? '<p class="meta">' + escapeHtml(meta) + '</p>' : '')),
     '    <article class="content collection-post-content blog-post-content">',
-    '        <p class="reader-back"><a href="' + collection.directoryFile + '#' + escapeHtml(entry.id) + '">Back to ' + collection.label + ' directory</a></p>',
-    '        <h1>' + escapeHtml(entry.title) + '</h1>',
-    meta ? '        <p class="meta">' + escapeHtml(meta) + '</p>' : '',
     key === 'reading' ? renderReadingSourceBlock(entry) : '',
     entry.summary ? '        <p class="summary">' + escapeHtml(entry.summary) + '</p>' : '',
     renderTags(entry.tags),
@@ -295,12 +299,14 @@ export function setupHomePreview(profile) {
   const previewNav = document.querySelector('.page-nav');
   const previewBtns = Array.from(document.querySelectorAll('.page-btn[data-preview]'));
   const viewport = document.getElementById('previewViewport');
+  const homeCard = previewNav?.closest('.card');
   const cards = [document.getElementById('previewCardA'), document.getElementById('previewCardB')];
   let currentIndex = 0;
   let activePreview = 'about';
   let timer = 0;
+  let resetTimer = 0;
 
-  if (!previewNav || !viewport || cards.some(card => !card)) return;
+  if (!previewNav || !viewport || !homeCard || cards.some(card => !card)) return;
 
   function cardHeight(card) {
     return Math.ceil(card.scrollHeight);
@@ -317,6 +323,34 @@ export function setupHomePreview(profile) {
     other.style.opacity = '0';
     other.style.transform = 'translateX(0)';
     other.style.pointerEvents = 'none';
+  }
+
+  function isPreviewRegionTarget(target) {
+    return Boolean(target && homeCard.contains(target));
+  }
+
+  function clearPreviewReset() {
+    if (!resetTimer) return;
+    clearTimeout(resetTimer);
+    resetTimer = 0;
+  }
+
+  function schedulePreviewReset(event) {
+    if (isPreviewRegionTarget(event.relatedTarget)) return;
+    clearPreviewReset();
+    resetTimer = window.setTimeout(() => {
+      setPreview('about');
+      resetTimer = 0;
+    }, 240);
+  }
+
+  function scheduleFocusReset(event) {
+    if (isPreviewRegionTarget(event.relatedTarget)) return;
+    clearPreviewReset();
+    resetTimer = window.setTimeout(() => {
+      if (!isPreviewRegionTarget(document.activeElement)) setPreview('about');
+      resetTimer = 0;
+    }, 0);
   }
 
   function setPreview(key, immediate = false) {
@@ -373,13 +407,19 @@ export function setupHomePreview(profile) {
   setPreview('about', true);
   previewBtns.forEach(btn => {
     const key = btn.dataset.preview || 'about';
-    btn.addEventListener('mouseenter', () => setPreview(key));
-    btn.addEventListener('focus', () => setPreview(key));
+    btn.addEventListener('mouseenter', () => {
+      clearPreviewReset();
+      setPreview(key);
+    });
+    btn.addEventListener('focus', () => {
+      clearPreviewReset();
+      setPreview(key);
+    });
   });
-  previewNav.addEventListener('mouseleave', () => setPreview('about'));
-  previewNav.addEventListener('focusout', event => {
-    if (!previewNav.contains(event.relatedTarget)) setPreview('about');
-  });
+  homeCard.addEventListener('mouseenter', clearPreviewReset);
+  homeCard.addEventListener('focusin', clearPreviewReset);
+  homeCard.addEventListener('mouseleave', schedulePreviewReset);
+  homeCard.addEventListener('focusout', scheduleFocusReset);
 }
 
 export function setupObfuscatedEmail() {

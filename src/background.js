@@ -5,6 +5,7 @@ export function setupBackground(getTheme) {
   if (!ctx) return;
 
   let theme = getTheme();
+  const isDetailPage = document.body.classList.contains('page-detail');
   let rafId = 0;
   let W = 0, H = 0, dpr = 1, cx = 0, cy = 0, reach = 1;
   const mqRM = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -79,7 +80,7 @@ export function setupBackground(getTheme) {
     cvs.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     cx = W * 0.5;
-    cy = H * 0.5;
+    cy = H * (isDetailPage ? (mob() ? 0.56 : 0.58) : 0.5);
     reach = Math.hypot(W, H) * 0.62;
     cortexRadius = reach * 0.78;
     cortexRadius2 = cortexRadius * cortexRadius;
@@ -96,11 +97,12 @@ export function setupBackground(getTheme) {
     fullClear();
     const r = Math.max(W, H) * 0.45;
     const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    const glowScale = isDetailPage ? 0.66 : 1;
     if (theme === 'dark') {
-      g.addColorStop(0, 'rgba(0,255,65,0.108)');
+      g.addColorStop(0, 'rgba(0,255,65,' + (0.108 * glowScale) + ')');
       g.addColorStop(1, 'rgba(5,5,5,0)');
     } else {
-      g.addColorStop(0, 'rgba(255,195,56,0.17)');
+      g.addColorStop(0, 'rgba(255,195,56,' + (0.17 * glowScale) + ')');
       g.addColorStop(1, 'rgba(247,243,232,0)');
     }
     ctx.fillStyle = g;
@@ -135,9 +137,9 @@ export function setupBackground(getTheme) {
   }
 
   function scheduleNextPulse(now) {
-    const base = 2000 + Math.random() * 4000;
+    const base = isDetailPage ? 3200 + Math.random() * 5200 : 2000 + Math.random() * 4000;
     const jitter = (Math.random() - 0.5) * 420;
-    nextPulseAt = now + Math.max(1900, base + jitter);
+    nextPulseAt = now + Math.max(isDetailPage ? 3200 : 1900, base + jitter);
   }
 
   function pickPulseTracts(major) {
@@ -151,8 +153,9 @@ export function setupBackground(getTheme) {
   }
 
   function beginPulse(now) {
-    const major = Math.random() < 0.24;
-    pulseEnergy = major ? 1.35 + Math.random() * 0.45 : 0.9 + Math.random() * 0.34;
+    const detailPulseScale = isDetailPage ? 0.78 : 1;
+    const major = Math.random() < (isDetailPage ? 0.16 : 0.24);
+    pulseEnergy = (major ? 1.35 + Math.random() * 0.45 : 0.9 + Math.random() * 0.34) * (isDetailPage ? 0.86 : 1);
     pulseTracts = pickPulseTracts(major);
     const capacity = Math.max(0, MAX_P - n);
     if (capacity < 8) {
@@ -164,8 +167,8 @@ export function setupBackground(getTheme) {
       ? ((mob() ? 70 : 260) + ((Math.random() * (mob() ? 90 : 300)) | 0))
       : ((mob() ? 32 : 96) + ((Math.random() * (mob() ? 42 : 150)) | 0));
     const scale = 0.7 + spawn * 0.06;
-    pulseRemaining = Math.min(capacity, Math.max(12, (rawCount * scale) | 0));
-    pulseEndsAt = now + 110 + Math.random() * 90;
+    pulseRemaining = Math.min(capacity, Math.max(10, (rawCount * scale * detailPulseScale) | 0));
+    pulseEndsAt = now + (isDetailPage ? 130 : 110) + Math.random() * (isDetailPage ? 70 : 90);
     pulseActive = true;
     scheduleNextPulse(now);
   }
@@ -192,12 +195,12 @@ export function setupBackground(getTheme) {
   function emitDrift(now) {
     if (pulseActive || now < nextDriftEmitAt) return;
     if (n >= POOL || n >= MAX_P) return;
-    emit((Math.random() * TRACT_COUNT) | 0, 0.58 + Math.random() * 0.18, false);
-    nextDriftEmitAt = now + 320 + Math.random() * 760;
+    emit((Math.random() * TRACT_COUNT) | 0, (isDetailPage ? 0.5 : 0.58) + Math.random() * (isDetailPage ? 0.14 : 0.18), false);
+    nextDriftEmitAt = now + (isDetailPage ? 520 : 320) + Math.random() * (isDetailPage ? 980 : 760);
   }
 
   function addBloom(x, y, depth, now) {
-    const bloomCap = mob() ? 36 : BLOOM_CAP;
+    const bloomCap = isDetailPage ? (mob() ? 26 : 84) : (mob() ? 36 : BLOOM_CAP);
     if (blooms.length >= bloomCap) blooms.shift();
     blooms.push({
       x,
@@ -205,7 +208,7 @@ export function setupBackground(getTheme) {
       born: now,
       life: 220 + Math.random() * 280,
       radius: (30 + Math.random() * 50) * (0.82 + depth * 0.4),
-      alpha: 0.18 + depth * 0.26
+      alpha: (0.18 + depth * 0.26) * (isDetailPage ? 0.72 : 1)
     });
   }
 
@@ -239,11 +242,12 @@ export function setupBackground(getTheme) {
 
   function calcLimits() {
     if (mob()) {
-      MAX_P = 480;
-      spawn = 3;
+      MAX_P = isDetailPage ? 380 : 480;
+      spawn = isDetailPage ? 2 : 3;
     } else {
-      MAX_P = Math.min(2500, Math.max(1200, (W * H / 820) | 0));
-      spawn = Math.min(12, Math.max(6, (MAX_P / 180) | 0));
+      const computedMax = Math.min(2500, Math.max(1200, (W * H / 820) | 0));
+      MAX_P = isDetailPage ? Math.max(900, (computedMax * 0.82) | 0) : computedMax;
+      spawn = Math.min(isDetailPage ? 9 : 12, Math.max(isDetailPage ? 4 : 6, (MAX_P / (isDetailPage ? 220 : 180)) | 0));
     }
     ORIG_MAX = MAX_P;
     origSpawn = spawn;
@@ -445,6 +449,7 @@ export function setupBackground(getTheme) {
       al *= dark ? (0.102 + 0.45 * p.d) : (0.13 + 0.62 * p.d);
       if (prog < 0.09) al *= 1.35 - prog * 2.8;
       al *= 0.76 + Math.min(1.2, p.spark) * 0.26;
+      if (isDetailPage) al *= 0.88;
       if (al > 0.9) al = 0.9;
       if (al < 0.003) {
         i++;
@@ -473,13 +478,14 @@ export function setupBackground(getTheme) {
     drawBlooms(now, dark);
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = dark ? 'screen' : 'source-over';
-    const gr = isMob ? 32 : 48;
+    const centerGlowScale = isDetailPage ? 0.62 : 1;
+    const gr = isMob ? (isDetailPage ? 28 : 32) : (isDetailPage ? 40 : 48);
     const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr);
     if (dark) {
-      grd.addColorStop(0, 'rgba(0,255,65,0.05)');
+      grd.addColorStop(0, 'rgba(0,255,65,' + (0.05 * centerGlowScale) + ')');
       grd.addColorStop(1, 'rgba(0,255,65,0)');
     } else {
-      grd.addColorStop(0, 'rgba(255,195,56,0.052)');
+      grd.addColorStop(0, 'rgba(255,195,56,' + (0.052 * centerGlowScale) + ')');
       grd.addColorStop(1, 'rgba(255,195,56,0)');
     }
     ctx.fillStyle = grd;
@@ -495,8 +501,8 @@ export function setupBackground(getTheme) {
     initTracts();
     const now = performance.now();
     updateTractVectors(now);
-    nextPulseAt = now + 520 + Math.random() * 1200;
-    nextDriftEmitAt = now + 120 + Math.random() * 240;
+    nextPulseAt = now + (isDetailPage ? 2800 + Math.random() * 2200 : 520 + Math.random() * 1200);
+    nextDriftEmitAt = now + (isDetailPage ? 360 + Math.random() * 420 : 120 + Math.random() * 240);
     fullClear();
     lastFullClearAt = now;
     if (reduced) drawStatic();

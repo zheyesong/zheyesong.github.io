@@ -1,6 +1,7 @@
 ---
 title: "Source Title"
 slug: "source-title-note"
+sortKey: "Author A"
 date: "2026-06-01"
 sourceType: "article"
 authors: ["Author A", "Author B"]

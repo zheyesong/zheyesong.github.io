@@ -52,6 +52,7 @@ Reading notes use frontmatter shaped around external source material:
 ---
 title: "Source Title"
 slug: "short-stable-slug"
+sortKey: "Author A"
 date: "2026-06-01"
 sourceType: "paper"
 authors: ["Author A", "Author B"]
@@ -75,6 +76,8 @@ draft: false
 ```
 
 Supported `sourceType` values are intentionally informal: `paper`, `blog`, `article`, `book`, `talk`, or any short label that fits the source.
+
+Reading notes are sorted A-Z by `sortKey`. If `sortKey` is empty, the site falls back to the first author, then the note title.
 
 ## Build And Deploy
 

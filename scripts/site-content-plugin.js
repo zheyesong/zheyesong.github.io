@@ -114,6 +114,31 @@ function listMarkdownFiles(dir) {
     .map(file => join(dir, file));
 }
 
+const alphaCollator = new Intl.Collator('en', {
+  sensitivity: 'base',
+  numeric: true,
+  ignorePunctuation: true
+});
+
+function readingSortValue(entry) {
+  return String(entry.sortKey || entry.authors[0] || entry.title || entry.slug || '').trim();
+}
+
+function compareByReadingAlphabet(a, b) {
+  const primary = alphaCollator.compare(readingSortValue(a), readingSortValue(b));
+  if (primary) return primary;
+
+  const title = alphaCollator.compare(String(a.title), String(b.title));
+  if (title) return title;
+
+  return alphaCollator.compare(String(a.slug), String(b.slug));
+}
+
+function compareByOrderThenDate(a, b) {
+  if (a.order !== b.order) return a.order - b.order;
+  return String(b.date).localeCompare(String(a.date));
+}
+
 function normalizeEntry(filePath, raw, md, pageFile, readerFile = '', readerParam = 'post') {
   const parsed = parseMarkdownDocument(raw);
   const meta = parsed.frontmatter;
@@ -131,6 +156,7 @@ function normalizeEntry(filePath, raw, md, pageFile, readerFile = '', readerPara
     status: String(meta.status || ''),
     summary: String(meta.summary || ''),
     tags,
+    sortKey: String(meta.sortKey || ''),
     sourceType: String(meta.sourceType || ''),
     authors: normalizeStringList(meta.authors),
     year: String(meta.year || ''),
@@ -147,15 +173,14 @@ function normalizeEntry(filePath, raw, md, pageFile, readerFile = '', readerPara
   };
 }
 
-function normalizeCollection(rootDir, collectionDir, md, pageFile, readerFile = '', readerParam = 'post') {
+function normalizeCollection(rootDir, collectionDir, md, pageFile, readerFile = '', readerParam = 'post', options = {}) {
   const dir = resolve(rootDir, 'content', collectionDir);
+  const sorter = options.sort === 'reading-alpha' ? compareByReadingAlphabet : compareByOrderThenDate;
+
   return listMarkdownFiles(dir)
     .map(filePath => normalizeEntry(filePath, readFileSync(filePath, 'utf8'), md, pageFile, readerFile, readerParam))
     .filter(entry => !entry.draft)
-    .sort((a, b) => {
-      if (a.order !== b.order) return a.order - b.order;
-      return String(b.date).localeCompare(String(a.date));
-    });
+    .sort(sorter);
 }
 
 function readJson(filePath) {
@@ -183,7 +208,7 @@ function buildContent(rootDir) {
     profile,
     collections: {
       blog: normalizeCollection(rootDir, 'blog', md, 'blog.html', 'blog-read.html'),
-      reading: normalizeCollection(rootDir, 'reading', md, 'reading.html', 'reading-read.html', 'note')
+      reading: normalizeCollection(rootDir, 'reading', md, 'reading.html', 'reading-read.html', 'note', { sort: 'reading-alpha' })
     }
   };
 }
