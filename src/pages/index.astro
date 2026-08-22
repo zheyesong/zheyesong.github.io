@@ -1,0 +1,91 @@
+---
+import { getCollection } from 'astro:content';
+import KineticHead from '../components/KineticHead.astro';
+import ResearchFieldMap from '../components/ResearchFieldMap.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { profile, selectedWork, site } from '../data/site';
+
+const research = (await getCollection('research'))
+  .filter((entry) => entry.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const featuredWork = selectedWork.filter((entry) => entry.featured);
+---
+
+<BaseLayout>
+  <section class="hero page-shell" aria-labelledby="page-title">
+    <div class="hero__art">
+      <KineticHead />
+    </div>
+    <div class="hero__content">
+      <p class="page-folio">01</p>
+      <h1 id="page-title">{profile.name}</h1>
+      <p class="hero__role">
+        {profile.role},<br />
+        {profile.institution}
+      </p>
+      <div class="hero__statement">
+        <p>{profile.statement}</p>
+        <p>{profile.focus}</p>
+      </div>
+      <div class="hero__links" aria-label="Profile links">
+        <a href={`mailto:${site.email}`}>Email</a>
+        <span aria-hidden="true"></span>
+        <a href="/cv/">CV</a>
+        <span aria-hidden="true"></span>
+        <a href={site.github} target="_blank" rel="noreferrer">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="home-content page-shell">
+    <section class="content-section" aria-labelledby="research-heading">
+      <SectionHeading index="01">
+        <span id="research-heading">Research Interests</span>
+      </SectionHeading>
+      <ResearchFieldMap fields={research.map((entry) => ({ id: entry.id, title: entry.data.title }))} />
+    </section>
+
+    <section class="content-section" aria-labelledby="work-heading">
+      <SectionHeading index="02">
+        <span id="work-heading">Selected Work</span>
+      </SectionHeading>
+      <ol class="work-list">
+        {featuredWork.map((entry, index) => (
+          <li>
+            <a href={entry.href} target="_blank" rel="noreferrer">
+              <span class="catalogue-index">W.{String(index + 1).padStart(2, '0')}</span>
+              <div class="work-list__main">
+                <span class="work-list__title">{entry.title}</span>
+                <span class="work-list__summary">{entry.summary}</span>
+              </div>
+              <div class="work-list__meta">
+                <span>{entry.kind}</span>
+                <time>{entry.year}</time>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="content-section" aria-labelledby="education-heading">
+      <SectionHeading index="03">
+        <span id="education-heading">Education</span>
+      </SectionHeading>
+      <dl class="detail-table detail-table--education">
+        {profile.education.map((entry) => (
+          <div>
+            <dt>{entry.institution}</dt>
+            <dd>
+              {entry.degree}
+              <span class="detail-table__meta">{entry.period} · {entry.score}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+  </div>
+</BaseLayout>

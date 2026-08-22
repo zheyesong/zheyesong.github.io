@@ -1,7 +1,15 @@
-# Zheye Song Academic Portfolio
+# Zheye Song Academic Homepage
 
-This repository contains the source for `https://zheyesong.github.io`.
-It is a Vite-powered static site with Markdown-backed Blog and Reading Notes collections.
+Source for `https://zheyesong.github.io`. The site is a static Astro project designed for supervisors, potential collaborators, and academic peers.
+
+## Stack
+
+- Astro 7 with static output
+- TypeScript and Astro content collections
+- Three.js and a generated GLB asset for the layered kinetic head
+- Cormorant Garamond and Inter, bundled locally with Fontsource
+
+Use Node 22, matching the GitHub Pages workflow.
 
 ## Local Development
 
@@ -10,84 +18,108 @@ npm install
 npm run dev
 ```
 
-The Vite dev server keeps the public URLs stable:
-
-- `/`
-- `/about.html`
-- `/blog.html`
-- `/blog-read.html?post=<slug>`
-- `/reading.html`
-- `/reading-read.html?note=<slug>`
-
-## Content Model
-
-Site-level metadata lives in `content/site.json`.
-Profile and homepage/About copy live in `content/profile.json`.
-
-Blog posts live in `content/blog/`.
-Reading notes live in `content/reading/`.
-Drop a new `.md` file into `content/blog/` and it will be included in the Blog directory, search index, and `blog-read.html?post=<slug>` reader on the next dev refresh/build. Drop a new `.md` file into `content/reading/` and it will follow the same flow through `reading.html` and `reading-read.html?note=<slug>`.
-Blog posts use frontmatter:
-
-```markdown
----
-title: "Entry Title"
-slug: "entry-anchor"
-date: "2026-02-14"
-status: "Draft"
-summary: "One sentence summary."
-tags: ["topic", "method"]
-order: 1
-draft: false
----
-
-Markdown body goes here.
-```
-
-Set `draft: true` to keep an entry out of the rendered directory and search index.
-
-Reading notes use frontmatter shaped around external source material:
-
-```markdown
----
-title: "Source Title"
-slug: "short-stable-slug"
-sortKey: "Author A"
-date: "2026-06-01"
-sourceType: "paper"
-authors: ["Author A", "Author B"]
-year: 2025
-venue: "arXiv"
-url: "https://example.com/source"
-status: "Reading"
-summary: "One sentence summary of why this source matters."
-tags: ["topic", "method"]
-order: 1
-draft: false
----
-
-## Why I Read It
-
-## Core Idea
-
-## My Notes
-
-## Questions
-```
-
-Supported `sourceType` values are intentionally informal: `paper`, `blog`, `article`, `book`, `talk`, or any short label that fits the source.
-
-Reading notes are sorted A-Z by `sortKey`. If `sortKey` is empty, the site falls back to the first author, then the note title.
-
-## Build And Deploy
+The local server prints the URL it selects. Production verification is:
 
 ```bash
-npm run build
+npm run verify
 npm run preview
 ```
 
-GitHub Actions builds the Vite site and deploys `dist/` to GitHub Pages on pushes to `main`.
+## Public Routes
 
-## Link Notes
+- `/` - profile, research interests, selected work, and education
+- `/research/` - research interests and linked public research code
+- `/writing/` - public research notes and essays
+- `/cv/` - verified academic profile with a downloadable PDF
 
-The homepage hides unavailable CV and Publications links by default. To enable the CV link, place `cv.pdf` in `public/` and set the CV entry in `content/profile.json` to `"enabled": true`.
+Legacy `.html` URLs remain in `public/` as redirects so old bookmarks do not break.
+
+## Profile Data
+
+Canonical profile, project, contact, navigation, and CV metadata live in:
+
+```text
+src/data/profile.json
+```
+
+`src/data/site.ts` validates the JSON before exposing it to Astro. Keep the JSON factual. Do not add
+publications, positions, awards, dates, or links until they can be verified.
+
+## Research Content
+
+Research directions live in `src/content/research/`. Each Markdown file uses:
+
+```markdown
+---
+title: "Research direction"
+summary: "Short description for the homepage."
+status: "Research interest"
+focus: "Short method or question label"
+order: 1
+featured: true
+---
+
+Longer, carefully qualified description.
+```
+
+Set `featured: false` to keep an entry off the homepage while retaining it on the Research page.
+
+## CV PDF
+
+The downloadable CV is built from the reviewed LaTeX source at `cv/Zheye-Song-CV.tex`. Website
+profile data remains in `src/data/profile.json`; `npm run check:cv` verifies that their key factual
+fields remain aligned. After updating the CV source, regenerate the public PDF with TeX Live or
+MacTeX:
+
+```bash
+npm run build:cv
+```
+
+The command compiles into the ignored `.cv-build/` directory and updates
+`public/Zheye-Song-CV.pdf`.
+
+## Writing Content
+
+Writing lives in `src/content/writing/`. Start from `_template.md`:
+
+```markdown
+---
+title: "Writing title"
+summary: "One sentence explaining the note and why it matters."
+date: "2026-07-15"
+category: "Research note"
+tags: ["topic"]
+draft: true
+order: 1
+---
+
+## Question
+
+## Main idea
+
+## Notes
+
+## Open questions
+```
+
+Supported categories are `Research note`, `Reading note`, `Course project`, and `Expository note`.
+Dates are timezone-independent `YYYY-MM-DD` strings. Entries default to draft unless explicitly set
+to `draft: false`; drafts are excluded from the directory, generated routes, and sitemap.
+
+## Kinetic Head
+
+The sculpture uses `public/assets/kinetic-head-master.png` as its canonical resting image. That keeps the face, neck, lamella spacing, crop, and reflections pixel-faithful to the approved visual reference instead of asking a procedural model to approximate them.
+
+`scripts/build-kinetic-head.mjs` converts that source into a 63-layer GLB and a matching texture.
+During interaction, the layers complete one independently directed mechanical turn over seven seconds.
+Each layer uses a motor-like acceleration/deceleration profile plus a small cam offset while returning
+to exact alignment with the static image at the end of the cycle.
+
+The choreography is grounded in the documented mechanism rather than a generic spin. [David Cerny's official work page](https://www.davidcerny.cz/work/k-kafka-head) describes 42 independently rotating panels; [Quadrio's technical page](https://www.quadrio.cz/en/franz-kafka-statue) documents 42 synchronous motors and inductive alignment sensors; and the [engineering brief](https://www.apexdyna.nl/wp-content/uploads/V-hlave-Franze-Kafky-znaceni-en-2015.pdf) records 15 movement types in the original long-form choreography. This web interaction condenses that behavior into one deliberate hover/button cycle rather than claiming to reproduce the physical 40-minute program literally.
+
+The control supports pointer hover, button activation, Enter, and Space; rejects duplicate triggers while moving; and returns to the untouched native image after the final alignment hold. Motion is disabled when `prefers-reduced-motion` is enabled.
+
+## Deployment
+
+`.github/workflows/pages.yml` installs dependencies, runs type/content/CV/internal-link checks,
+builds `dist/`, and deploys it to GitHub Pages on pushes to `main`.

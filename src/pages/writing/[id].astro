@@ -1,0 +1,86 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatWritingDate, getReadingStats } from '../../utils/writing';
+
+export async function getStaticPaths() {
+  const entries = (await getCollection('writing'))
+    .filter((entry) => !entry.data.draft)
+    .sort((a, b) => b.data.date.localeCompare(a.data.date));
+
+  return entries.map((entry, index) => ({
+    params: { id: entry.id },
+    props: {
+      entry,
+      newerEntry: index > 0 ? entries[index - 1] : null,
+      olderEntry: index < entries.length - 1 ? entries[index + 1] : null,
+    },
+  }));
+}
+
+const { entry, newerEntry, olderEntry } = Astro.props;
+const { Content, headings } = await render(entry);
+const outline = headings.filter((heading) => heading.depth === 2);
+const stats = getReadingStats(entry.body ?? '');
+---
+
+<BaseLayout title={`${entry.data.title} | Zheye Song`} description={entry.data.summary}>
+  <article class="page-shell writing-post">
+    <header class="writing-post__header">
+      <nav class="writing-post__breadcrumb" aria-label="Breadcrumb">
+        <a href="/writing/">Writing</a>
+        <span aria-hidden="true">/</span>
+        <span>{entry.data.category}</span>
+      </nav>
+      <h1>{entry.data.title}</h1>
+      <p class="writing-post__deck">{entry.data.summary}</p>
+      <div class="writing-post__meta">
+        <time datetime={entry.data.date}>
+          {formatWritingDate(entry.data.date, 'long')}
+        </time>
+        <span>{stats.minutes} min read</span>
+        <span>{stats.words} words</span>
+      </div>
+    </header>
+
+    <div class="writing-post__layout">
+      {outline.length > 1 && (
+        <nav class="writing-post__outline" aria-label="On this page">
+          <p>On this page</p>
+          {outline.map((heading) => (
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+          ))}
+        </nav>
+      )}
+      <div class="writing-post__column">
+        <div class="prose prose--reading"><Content /></div>
+
+        {entry.data.tags.length > 0 && (
+          <footer class="writing-post__footer">
+            <p>Filed under</p>
+            <ul class="writing-tags" aria-label="Topics">
+              {entry.data.tags.map((tag) => <li>{tag}</li>)}
+            </ul>
+          </footer>
+        )}
+
+        {(newerEntry || olderEntry) && (
+          <nav class="writing-post__pager" aria-label="More writing">
+            {newerEntry ? (
+              <a href={`/writing/${newerEntry.id}/`}>
+                <span>Newer</span>
+                <strong>{newerEntry.data.title}</strong>
+              </a>
+            ) : <span></span>}
+            {olderEntry ? (
+              <a href={`/writing/${olderEntry.id}/`}>
+                <span>Older</span>
+                <strong>{olderEntry.data.title}</strong>
+              </a>
+            ) : <span></span>}
+          </nav>
+        )}
+      </div>
+    </div>
+  </article>
+</BaseLayout>

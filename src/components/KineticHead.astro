@@ -1,0 +1,39 @@
+<div
+  class="kinetic-head"
+  data-kinetic-head
+>
+  <img
+    class="kinetic-head__fallback"
+    src="/assets/kinetic-head-master.png"
+    alt="Chrome head assembled from horizontal mirror-steel layers"
+    decoding="async"
+    fetchpriority="high"
+    draggable="false"
+  />
+  <canvas class="kinetic-head__canvas" data-kinetic-canvas aria-hidden="true"></canvas>
+  <button
+    class="kinetic-head__control"
+    type="button"
+    data-kinetic-trigger
+    aria-label="Play sculpture rotation"
+    data-tooltip="Play sculpture rotation"
+  ></button>
+</div>
+
+<script>
+  const loadKineticHead = () => {
+    void import('../scripts/kinetic-head').then(({ initKineticHeads }) => {
+      initKineticHeads();
+    });
+  };
+
+  const idleWindow = window as Window & {
+    requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+  };
+
+  if (idleWindow.requestIdleCallback) {
+    idleWindow.requestIdleCallback(loadKineticHead, { timeout: 1800 });
+  } else {
+    globalThis.setTimeout(loadKineticHead, 600);
+  }
+</script>

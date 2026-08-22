@@ -1,0 +1,174 @@
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage[
+    top=0.65in,
+    bottom=0.65in,
+    left=0.65in,
+    right=0.65in
+]{geometry}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fontawesome5}
+\usepackage{charter}
+\usepackage{iftex}
+
+\hypersetup{
+    pdftitle={Zheye Song - Curriculum Vitae},
+    pdfauthor={Zheye Song},
+    pdfsubject={Academic curriculum vitae},
+    pdfkeywords={causal inference, policy learning, statistical learning}
+}
+
+\ifPDFTeX
+    \input{glyphtounicode}
+    \pdfgentounicode=1
+    \pdfcatalog{/Lang (en-US)}
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+\fi
+
+\pagestyle{empty}
+\setlength{\tabcolsep}{0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\raggedright
+\raggedbottom
+
+\titleformat{\section}
+  {\vspace{-6pt}\scshape\raggedright\large}
+  {}
+  {0em}
+  {}
+  [\titlerule \vspace{-5pt}]
+
+\newcommand{\resumeItem}[1]{
+    \item\small{#1}
+}
+
+\newcommand{\resumeSubheading}[4]{
+    \item
+    \begin{tabularx}{\textwidth}{@{}X r@{}}
+        \textbf{#1} & \textit{\small #2} \\
+        \textit{\small #3} & \textit{\small #4} \\
+    \end{tabularx}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[5]{
+    \item
+    \textbf{#1}\hfill\textit{\small #2} \\
+    \begin{tabularx}{\textwidth}{@{}X r@{}}
+        \small\textit{#4} & \textit{\small #3}
+    \end{tabularx}\vspace{-2pt}
+    \if\relax\detokenize{#5}\relax
+    \else
+        \small #5 \\
+    \fi
+    \vspace{-4pt}
+}
+
+\newcommand{\resumeProjectMeta}[1]{\small #1\\[-1pt]}
+\newcommand{\githubProjectIcon}{\hspace{0.25em}{\footnotesize\faGithub}}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}, itemsep=6pt]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.18in, label=\raisebox{0.15ex}{\tiny$\bullet$}, itemsep=2pt, topsep=3pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-3pt}}
+
+\begin{document}
+
+\begin{center}
+    {\Huge \scshape Zheye Song} \\ \vspace{2pt}
+    \small
+    \href{mailto:song_zheye@163.com}{song\_zheye@163.com}
+    $|$
+    \href{tel:+8618212006751}{+86 18212006751}
+    $|$
+    \href{https://github.com/zheyesong}{github.com/zheyesong}
+\end{center}
+
+\section{Education}
+\resumeSubHeadingListStart
+    \resumeSubheading
+        {Fudan University, 87/100}
+        {Sept 2022 -- Jun 2026}
+        {B.S. in Mathematics and Applied Mathematics}
+        {}
+    \resumeSubheading
+        {The Hong Kong Polytechnic University, 3.97/4.3}
+        {Sept 2024 -- Jan 2025}
+        {Exchange Student}
+        {}
+\resumeSubHeadingListEnd
+
+\section{Research Interests}
+\small{
+Causal Inference, Policy Learning, and Statistical Learning for Complex Data.
+}
+\vspace{-2pt}
+
+\section{Research Projects}
+\resumeSubHeadingListStart
+    \resumeProjectHeading
+        {Causal Inference in Metric Spaces via Distance Profiles}
+        {2025.08 -- 2026.05}
+        {Under Review}
+        {Advisor: Zhiheng Zhang, Tenure-Track Assistant Professor, SUFE}
+        {}
+        \resumeItemListStart
+            \resumeItem{Developed a distance-profile causal inference framework for object-valued outcomes by transforming metric-ball events in separable metric spaces into geometry-indexed binary potential-outcome contrasts.}
+            \resumeItem{Proved pointwise identification, doubly robust/AIPW estimation properties, Neyman orthogonality, and auxiliary-stabilized finite-grid simultaneous inference under causal identification and high-level nuisance conditions.}
+            \resumeItem{Validated the framework across Euclidean, Wasserstein, SPD, graph, and tree-valued outcomes, with semi-synthetic connectome and network benchmarks supporting calibrated coverage, global testing, and robustness diagnostics.}
+        \resumeItemListEnd
+
+    \resumeProjectHeading
+        {\href{https://github.com/zheyesong/hybridfull-cate}{Modular Causal Meta-Learners for CATE Estimation \githubProjectIcon}}
+        {2025.04 -- 2026.04}
+        {Research Project}
+        {Advisor: Jiaxi Yang, Alumni Researcher, Columbia University}
+        {}
+        \resumeItemListStart
+            \resumeItem{Built a BART-based cross-fitted nuisance layer and modular CATE estimator library, separating S-, X-, R-, and BCF-inspired correction principles under a common implementation.}
+            \resumeItem{Implemented HybridFull, an overlap-aware orthogonal-residual stacking rule that learns simplex weights over candidate CATE estimators within propensity strata, and evaluated it across S1--S6 simulations plus IHDP/JOBS benchmarks.}
+        \resumeItemListEnd
+
+    \resumeProjectHeading
+        {Relative-Belief Multiple Testing under General Additive Loss}
+        {2026.01 -- Present}
+        {Ongoing}
+        {Collaborator: Qiaoyu Liang, Ph.D. student, University of Toronto}
+        {}
+        \resumeItemListStart
+            \resumeItem{Building on \href{https://icml.cc/virtual/2026/poster/60984}{``An Evidential Route to Asymptotic Bayes Optimality under Sparsity''} (ICML 2026 poster), extended the relative-belief ABOS framework from additive 0-1 loss to general additive loss by deriving the loss-adjusted Bayes oracle, fixed-threshold ABOS window, and risk scale.}
+            \resumeItem{Developed a regular scale-prior relative-belief threshold theory using local prior-predictive expansion, yielding ABOS conditions for one-group working priors.}
+            \resumeItem{Unified normal and uniform relative-belief rules under the regular scale-prior framework and organized additional regular-prior cases including Laplace, Cauchy, and Student-t priors.}
+        \resumeItemListEnd
+
+    \resumeProjectHeading
+        {Survey-Based Health Risk Modeling with Interpretable Machine Learning}
+        {2025.11 -- Present}
+        {Intern Project}
+        {Advisor: Kun Tang, Associate Professor, Tsinghua University}
+        {}
+        \resumeItemListStart
+            \resumeItem{Participated in questionnaire data cleaning and feature preparation for a large-scale student health survey, producing analysis-ready inputs for downstream modeling.}
+            \resumeItem{Built and ran the full machine-learning pipeline, including imputation, stratified train/test evaluation, six-model benchmarking, class-imbalance handling, and interpretable model analysis with feature importance and SHAP outputs.}
+        \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Honors and Awards}
+\resumeSubHeadingListStart
+    \resumeSubheading
+        {Freshman Scholarship, First Prize}
+        {2022}
+        {Fudan University}
+        {}
+    \resumeSubheading
+        {Basic Discipline Scholarship}
+        {2023--2024}
+        {Fudan University}
+        {}
+\resumeSubHeadingListEnd
+
+\end{document}

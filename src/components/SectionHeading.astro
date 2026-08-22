@@ -1,0 +1,16 @@
+---
+interface Props {
+  as?: 'h2' | 'h1';
+  index?: string;
+}
+
+const { as = 'h2', index } = Astro.props as Props;
+const Tag = as;
+---
+
+<div class:list={['section-heading', { 'section-heading--indexed': index }] }>
+  {index && (
+    <p class="section-heading__index">{index}</p>
+  )}
+  <Tag><slot /></Tag>
+</div>

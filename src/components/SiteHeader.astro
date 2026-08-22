@@ -1,0 +1,28 @@
+---
+import { navigation } from '../data/site';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="site-header__inner page-shell">
+    <a class="site-header__identity" href="/" aria-label="Zheye Song, home">ZS</a>
+    <nav class="site-nav" aria-label="Primary navigation">
+      {navigation.map((item) => (
+        <a
+          class:list={['site-nav__link', { 'is-active': isActive(item.href) }]}
+          href={item.href}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>

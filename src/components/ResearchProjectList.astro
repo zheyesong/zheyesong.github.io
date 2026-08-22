@@ -1,0 +1,52 @@
+---
+interface ResearchProject {
+  id: string;
+  title: string;
+  period: string;
+  status: string;
+  mentorLabel: string;
+  mentor: string;
+  affiliation: string;
+  summary: string;
+  highlights: string[];
+  methods: string;
+  href?: string;
+}
+
+interface Props {
+  projects: ResearchProject[];
+  compact?: boolean;
+}
+
+const { projects, compact = false } = Astro.props as Props;
+---
+
+<ol class:list={['project-list', { 'project-list--compact': compact }] }>
+  {projects.map((project, index) => (
+    <li id={project.id} class="project-entry">
+      <div class="project-entry__meta">
+        <span class="catalogue-index">P.{String(index + 1).padStart(2, '0')}</span>
+        <time>{project.period}</time>
+        <span>{project.status}</span>
+      </div>
+      <div class="project-entry__content">
+        <h3>
+          {project.href ? (
+            <a href={project.href} target="_blank" rel="noreferrer">{project.title}</a>
+          ) : project.title}
+        </h3>
+        <p class="project-entry__people">
+          <span>{project.mentorLabel}: {project.mentor}</span>
+          <span>{project.affiliation}</span>
+        </p>
+        <p class="project-entry__summary">{project.summary}</p>
+        {!compact && (
+          <ul class="project-entry__highlights">
+            {project.highlights.map((highlight) => <li>{highlight}</li>)}
+          </ul>
+        )}
+        <p class="project-entry__methods">{project.methods}</p>
+      </div>
+    </li>
+  ))}
+</ol>

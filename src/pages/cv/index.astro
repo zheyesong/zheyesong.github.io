@@ -1,0 +1,95 @@
+---
+import ResearchProjectList from '../../components/ResearchProjectList.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { awards, cv, profile, researchProjects, site } from '../../data/site';
+---
+
+<BaseLayout
+  title="CV | Zheye Song"
+  description="Academic profile and research interests of Zheye Song."
+>
+  <article class="page-shell interior-page cv-page">
+    <header class="interior-page__header cv-page__header">
+      <div>
+        <p class="page-folio">04</p>
+        <h1>Curriculum Vitae</h1>
+        <p>{profile.role}, {profile.institution}</p>
+      </div>
+      <div class="cv-page__contact">
+        <a class="cv-page__download" href={cv.pdfHref} download>
+          <span data-download-icon aria-hidden="true"></span>
+          <span>Download PDF</span>
+        </a>
+        <div class="cv-page__contact-links">
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+          <a href={site.github} target="_blank" rel="noreferrer">GitHub</a>
+        </div>
+        <p>Updated {cv.updated}</p>
+      </div>
+    </header>
+
+    <section class="cv-section">
+      <SectionHeading index="A">Education</SectionHeading>
+      {profile.education.map((entry, index) => (
+        <div class="cv-entry">
+          <div class="cv-entry__meta">
+            <p class="catalogue-index">E.{String(index + 1).padStart(2, '0')}</p>
+            <p>{entry.period}</p>
+            <p>{entry.score}</p>
+          </div>
+          <div>
+            <h3>{entry.institution}</h3>
+            <p>{entry.degree}</p>
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <section class="cv-section">
+      <SectionHeading index="B">Research Interests</SectionHeading>
+      <ul class="plain-list">
+        {profile.researchInterests.map((interest, index) => (
+          <li>
+            <span class="catalogue-index">R.{String(index + 1).padStart(2, '0')}</span>
+            <span>{interest}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="cv-section">
+      <SectionHeading index="C">Research Projects</SectionHeading>
+      <ResearchProjectList projects={researchProjects} compact />
+    </section>
+
+    <section class="cv-section">
+      <SectionHeading index="D">Honors and Awards</SectionHeading>
+      {awards.map((award, index) => (
+        <div class="cv-entry">
+          <div class="cv-entry__meta">
+            <p class="catalogue-index">A.{String(index + 1).padStart(2, '0')}</p>
+            <p>{award.year}</p>
+          </div>
+          <div>
+            <h3>{award.title}</h3>
+            <p>{award.institution}</p>
+          </div>
+        </div>
+      ))}
+    </section>
+  </article>
+</BaseLayout>
+
+<script>
+  import { createElement, Download } from 'lucide';
+
+  document.querySelectorAll<HTMLElement>('[data-download-icon]').forEach((container) => {
+    container.replaceChildren(createElement(Download, {
+      width: 16,
+      height: 16,
+      strokeWidth: 1.6,
+      'aria-hidden': 'true',
+    }));
+  });
+</script>

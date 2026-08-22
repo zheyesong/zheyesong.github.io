@@ -1,0 +1,98 @@
+---
+import { getCollection, render } from 'astro:content';
+import ResearchProjectList from '../../components/ResearchProjectList.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { researchProjects, selectedWork } from '../../data/site';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const research = (await getCollection('research')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const rendered = await Promise.all(
+  research.map(async (entry) => ({ entry, ...(await render(entry)) })),
+);
+const researchWork = selectedWork.filter((entry) => entry.kind === 'Research code');
+---
+
+<BaseLayout
+  title="Research | Zheye Song"
+  description="Research interests and projects in causal inference, policy learning, and statistical learning for complex data."
+>
+  <article class="page-shell interior-page">
+    <header class="interior-page__header">
+      <div>
+        <p class="page-folio">02</p>
+        <h1>Research Interests</h1>
+      </div>
+      <p>
+        I am interested in causal inference, policy learning, and statistical learning for complex
+        data, with current projects spanning object-valued outcomes, heterogeneous treatment
+        effects, sparse multiple testing, and interpretable health-risk modeling.
+      </p>
+    </header>
+
+    <div class="research-detail-list">
+      {rendered.map(({ entry, Content }, index) => (
+        <section id={entry.id} class="research-detail">
+          <div class="research-detail__meta">
+            <span class="catalogue-index">R.{String(index + 1).padStart(2, '0')}</span>
+            <p>{entry.data.status}</p>
+            <span>{entry.data.focus}</span>
+          </div>
+          <div class="research-detail__content">
+            <SectionHeading><span>{entry.data.title}</span></SectionHeading>
+            <p class="research-detail__summary">{entry.data.summary}</p>
+            <div class="prose"><Content /></div>
+            {index === 0 && (
+              <figure class="material-study">
+                <img
+                  src="/assets/kinetic-head-detail.png"
+                  alt="Close detail of the mirror-steel layers across the sculpture's face"
+                  width="394"
+                  height="240"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <figcaption>
+                  <span>Fig. 01 / Lamellae detail</span>
+                  <span>63 layers / mirror steel</span>
+                </figcaption>
+              </figure>
+            )}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <section class="research-projects" aria-labelledby="research-projects-heading">
+      <SectionHeading index="04">
+        <span id="research-projects-heading">Research Projects</span>
+      </SectionHeading>
+      <ResearchProjectList projects={researchProjects} />
+    </section>
+
+    <section class="research-work" aria-labelledby="research-work-heading">
+      <SectionHeading index="05">
+        <span id="research-work-heading">Selected Research Code</span>
+      </SectionHeading>
+      <ol class="work-list work-list--research">
+        {researchWork.map((entry, index) => (
+          <li>
+            <a href={entry.href} target="_blank" rel="noreferrer">
+              <span class="catalogue-index">W.{String(index + 1).padStart(2, '0')}</span>
+              <div class="work-list__main">
+                <span class="work-list__title">{entry.title}</span>
+                <span class="work-list__summary">{entry.summary}</span>
+                <span class="work-list__methods">{entry.methods}</span>
+              </div>
+              <div class="work-list__meta">
+                <span>{entry.kind}</span>
+                <time>{entry.year}</time>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </article>
+</BaseLayout>

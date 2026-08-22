@@ -1,0 +1,119 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatWritingDate, getReadingStats } from '../../utils/writing';
+
+const entries = (await getCollection('writing'))
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => b.data.date.localeCompare(a.data.date));
+
+const categories = [...new Set(entries.map((entry) => entry.data.category))];
+---
+
+<BaseLayout
+  title="Writing | Zheye Song"
+  description="Research, reading, course-project, and expository notes by Zheye Song."
+>
+  <section class="page-shell writing-index" aria-labelledby="writing-title">
+    <header class="writing-index__header">
+      <p class="page-folio">03 / Notes and essays</p>
+      <h1 id="writing-title">Writing</h1>
+      <p>
+        Research notes, reading notes, course projects, and expository writing on
+        causal inference and statistical learning.
+      </p>
+    </header>
+
+    {entries.length > 0 ? (
+      <>
+        <div class="writing-index__tools">
+          <p>
+            <span data-visible-count>{entries.length}</span>
+            {entries.length === 1 ? ' public note' : ' public notes'}
+          </p>
+          <div class="writing-filter" aria-label="Filter writing by category">
+            <button type="button" data-writing-filter="all" aria-pressed="true">All</button>
+            {categories.map((category) => (
+              <button type="button" data-writing-filter={category} aria-pressed="false">
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <ol class="writing-feed" data-writing-feed>
+          {entries.map((entry) => {
+            const stats = getReadingStats(entry.body ?? '');
+            return (
+              <li data-writing-entry data-category={entry.data.category}>
+                <article class="writing-feed__entry">
+                  <div class="writing-feed__meta">
+                    <span>{entry.data.category}</span>
+                    <time datetime={entry.data.date}>
+                      {formatWritingDate(entry.data.date, 'short')}
+                    </time>
+                    <span>{stats.minutes} min read</span>
+                    <span>{stats.words} words</span>
+                  </div>
+                  <div class="writing-feed__content">
+                    <h2>
+                      <a href={`/writing/${entry.id}/`}>{entry.data.title}</a>
+                    </h2>
+                    <p>{entry.data.summary}</p>
+                    {entry.data.tags.length > 0 && (
+                      <ul class="writing-tags" aria-label="Topics">
+                        {entry.data.tags.map((tag) => <li>{tag}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                  <a
+                    class="writing-feed__read"
+                    href={`/writing/${entry.id}/`}
+                    aria-label={`Read ${entry.data.title}`}
+                  >
+                    Read
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                </article>
+              </li>
+            );
+          })}
+        </ol>
+      </>
+    ) : (
+      <div class="empty-state">
+        <p>No public notes yet.</p>
+      </div>
+    )}
+  </section>
+
+  <script>
+    const filterButtons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>('[data-writing-filter]'),
+    );
+    const writingEntries = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-writing-entry]'),
+    );
+    const visibleCount = document.querySelector<HTMLElement>('[data-visible-count]');
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const selectedCategory = button.dataset.writingFilter;
+        let count = 0;
+
+        filterButtons.forEach((item) => {
+          item.setAttribute('aria-pressed', String(item === button));
+        });
+
+        writingEntries.forEach((entry) => {
+          const isVisible =
+            selectedCategory === 'all' || entry.dataset.category === selectedCategory;
+          entry.hidden = !isVisible;
+          if (isVisible) count += 1;
+        });
+
+        if (visibleCount) visibleCount.textContent = String(count);
+      });
+    });
+  </script>
+</BaseLayout>
