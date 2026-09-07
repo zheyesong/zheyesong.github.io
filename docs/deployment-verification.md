@@ -19,6 +19,9 @@ CI was Linux Chromium 151. Font rasterization and line wrapping differ between
 those environments. Baselines are therefore separated into `darwin/` and `linux/`.
 macOS baseline pixels were retained unchanged. New Linux baselines require visual
 review before committing; ordinary verification never updates snapshots.
+The 20 Linux page/section candidates from run 34165714439 were individually
+reviewed at desktop and mobile widths before inclusion. The temporary candidate
+generation step was then removed; deployment uses only committed baselines.
 
 The portrait comparison exposed a real compositing mismatch: Linux downsampled
 the image more softly than the WebGL canvas. Drawing the original decoded poster
