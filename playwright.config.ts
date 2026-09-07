@@ -10,6 +10,7 @@ export default defineConfig({
     },
   },
   fullyParallel: false,
+  updateSnapshots: 'none',
   use: {
     baseURL: 'http://127.0.0.1:4333',
     channel: process.env.CI ? undefined : 'chrome',
@@ -23,5 +24,6 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 120_000,
   },
-  snapshotPathTemplate: 'tests/__screenshots__/{arg}{ext}',
+  // Font rasterization/metrics differ between macOS Chrome and Linux Chromium.
+  snapshotPathTemplate: 'tests/__screenshots__/{platform}/{arg}{ext}',
 });

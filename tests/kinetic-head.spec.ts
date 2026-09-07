@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { attachVisualDiagnostics } from './visual-diagnostics';
+import { comparePortraits, portraitMatches, portraitMetrics } from './portrait-quality';
 
 test('web-only education visibility and concise hero identity', async ({ page }) => {
   await page.goto('/');
@@ -43,49 +44,44 @@ for (const device of [
   { width: 390, height: 844, deviceScaleFactor: 2 },
 ]) {
 test.describe(`pose comparison at ${device.width}px DPR ${device.deviceScaleFactor}`, () => {
-test.use({ viewport: { width: device.width, height: device.height }, deviceScaleFactor: device.deviceScaleFactor });
+test.use({ viewport: { width: device.width, height: device.height }, deviceScaleFactor: device.deviceScaleFactor, video: 'on' });
 test('static image and zero-angle canvas share their appearance', async ({ page }, testInfo) => {
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
   await page.locator('.kinetic-head__fallback').evaluate((image: HTMLImageElement) => image.decode());
   const head = page.locator('[data-kinetic-head]');
+  await expect(head).toHaveAttribute('data-poster-ready', 'true');
   await page.getByRole('button', { name: 'Play sculpture rotation', exact: true }).focus();
   await expect(head).toHaveAttribute('data-ready', 'true');
   await attachVisualDiagnostics(page, testInfo);
   await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
   const options = { style: '.kinetic-head__control { visibility: hidden !important; }' };
   const poster = await head.screenshot({ ...options, path: testInfo.outputPath('poster.png') });
-  // Diagnostic only: retain the exact decoded poster pixels, but composite them
-  // through a canvas so the browser uses the same CSS sampling path as WebGL.
-  await head.evaluate(async (root) => {
-    const image = root.querySelector<HTMLImageElement>('img')!;
-    await image.decode();
-    const surface = document.createElement('canvas');
-    surface.width = image.naturalWidth;
-    surface.height = image.naturalHeight;
-    surface.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
-    surface.dataset.posterDiagnostic = '';
-    surface.getContext('2d')!.drawImage(image, 0, 0);
-    root.insertBefore(surface, root.querySelector('[data-kinetic-canvas]'));
-  });
-  const canvasPoster = await head.screenshot({ ...options, path: testInfo.outputPath('canvas-poster.png') });
   // Expose the already-rendered rest frame, without playing or changing materials.
   await page.locator('[data-kinetic-canvas]').evaluate((canvas) => {
     canvas.style.transition = 'none';
     canvas.style.opacity = '1';
   });
   const canvas = await head.screenshot({ ...options, path: testInfo.outputPath('zero-angle.png') });
-  const a = await sharp(poster).removeAlpha().raw().toBuffer();
-  const b = await sharp(canvas).removeAlpha().raw().toBuffer();
-  const c = await sharp(canvasPoster).removeAlpha().raw().toBuffer();
-  const matchedError = c.reduce((sum, value, index) => sum + Math.abs(value - b[index]), 0) / c.length;
-  console.log(`Diagnostic canvas-poster mean RGB error: ${matchedError.toFixed(3)} / 255`);
-  expect(a.length).toBe(b.length);
-  const meanError = a.reduce((sum, value, index) => sum + Math.abs(value - b[index]), 0) / a.length;
+  const metrics = await comparePortraits(poster, canvas);
   await testInfo.attach('poster', { body: poster, contentType: 'image/png' });
   await testInfo.attach('zero-angle-canvas', { body: canvas, contentType: 'image/png' });
-  await testInfo.attach('pixel-comparison', { body: `Mean absolute RGB error: ${meanError.toFixed(3)} / 255`, contentType: 'text/plain' });
-  expect(meanError).toBeLessThan(2);
+  await testInfo.attach('pixel-comparison', { body: JSON.stringify(metrics), contentType: 'application/json' });
+  console.log(`Portrait quality: ${JSON.stringify(metrics)}`);
+  expect(metrics.meanError).toBeLessThan(4);
+  expect(metrics.channelBias).toBeLessThan(1);
+  expect(metrics.contrastChange).toBeLessThan(0.02);
+  expect(metrics.edgeChange).toBeLessThan(0.03);
+  await page.locator('[data-kinetic-canvas]').evaluate((canvas) => {
+    canvas.style.removeProperty('transition');
+    canvas.style.removeProperty('opacity');
+  });
+  await page.mouse.move(0, 0);
+  await page.getByRole('button', { name: 'Play sculpture rotation', exact: true }).press('Enter');
+  await expect(head).toHaveAttribute('data-phase', 'running');
+  await expect(head).toHaveAttribute('data-phase', 'idle', { timeout: 11_000 });
+  const settled = await head.screenshot({ ...options, path: testInfo.outputPath('settled-poster.png') });
+  expect((await comparePortraits(poster, settled)).meanError).toBeLessThan(0.01);
 });
 });
 }
@@ -133,10 +129,24 @@ test('reduced motion stops a running sequence and can be turned off again', asyn
   await expect(head).toHaveAttribute('data-running', 'false');
   await expect(head).toHaveAttribute('data-canvas-active', 'false');
   await expect(head).toHaveAttribute('data-max-layer-angle', '0.0000');
-  await expect(page.locator('canvas')).toHaveCSS('opacity', '0');
+  await expect(page.locator('[data-kinetic-canvas]')).toHaveCSS('opacity', '0');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await button.press('Space');
   await expect(head).toHaveAttribute('data-phase', 'running');
+});
+
+test('portrait quality gates reject blur, lighting changes and shifted layers', async () => {
+  const source = await readFile('public/assets/kinetic-head-rest.webp');
+  const { data, info } = await sharp(source).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const valid = portraitMetrics(data, data, info.width, info.height);
+  expect(portraitMatches(valid)).toBe(true);
+  const blurred = await sharp(source).blur(1).removeAlpha().raw().toBuffer();
+  const brightened = Uint8Array.from(data, (value) => Math.min(255, value + 8));
+  const lowerContrast = Uint8Array.from(data, (value) => Math.round(128 + (value - 128) * 0.9));
+  const shifted = Uint8Array.from(data, (_, index) => data[(index + info.width * 3) % data.length]);
+  for (const altered of [blurred, brightened, lowerContrast, shifted]) {
+    expect(portraitMatches(portraitMetrics(data, altered, info.width, info.height))).toBe(false);
+  }
 });
 
 test('failed model loading keeps the poster and navigation usable', async ({ page }) => {
