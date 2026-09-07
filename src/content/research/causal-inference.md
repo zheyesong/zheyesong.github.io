@@ -1,5 +1,6 @@
 ---
 title: "Causal inference"
+catalogueId: "R.01"
 summary: "Identification and robust estimation for heterogeneous and object-valued outcomes."
 status: "Primary interest"
 focus: "Metric-space outcomes · CATE · AIPW"

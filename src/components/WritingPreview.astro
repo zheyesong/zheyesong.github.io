@@ -1,0 +1,38 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatWritingDate, getReadingStats } from '../utils/writing';
+
+interface Props {
+  entries: CollectionEntry<'writing'>[];
+}
+
+const { entries } = Astro.props as Props;
+---
+
+<ol class="home-writing-list">
+  {entries.map((entry) => {
+    const stats = getReadingStats(entry.body ?? '');
+    return (
+      <li>
+        <article class="home-writing-entry">
+          <div class="home-writing-entry__meta">
+            <span>{entry.data.category}</span>
+            <time datetime={entry.data.date}>{formatWritingDate(entry.data.date, 'short')}</time>
+            <span>{stats.minutes} min read</span>
+          </div>
+          <div class="home-writing-entry__content">
+            <h3><a href={`/writing/${entry.id}/`}>{entry.data.title}</a></h3>
+            <p>{entry.data.summary}</p>
+          </div>
+          <a
+            class="home-writing-entry__read"
+            href={`/writing/${entry.id}/`}
+            aria-label={`Read ${entry.data.title}`}
+          >Read</a>
+        </article>
+      </li>
+    );
+  })}
+</ol>
+
+<a class="home-writing-all" href="/writing/">All writing</a>

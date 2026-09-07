@@ -1,5 +1,6 @@
 ---
 title: "Policy learning"
+catalogueId: "R.02"
 summary: "Decision rules built from heterogeneous treatment-effect estimates and explicit loss structures."
 status: "Research interest"
 focus: "CATE · Decision rules · Overlap"

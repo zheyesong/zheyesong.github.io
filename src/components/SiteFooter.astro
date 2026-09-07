@@ -5,7 +5,6 @@ import { navigation, profile } from '../data/site';
 <footer class="site-footer page-shell">
   <div class="site-footer__identity">
     <p class="site-footer__name">{profile.name}</p>
-    <p>{profile.role}, {profile.institution}</p>
   </div>
   <nav class="site-footer__nav" aria-label="Footer navigation">
     {navigation.map((item) => <a href={item.href}>{item.label}</a>)}

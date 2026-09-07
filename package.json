@@ -8,18 +8,29 @@
     "build": "astro build",
     "build:cv": "node scripts/build-cv.mjs",
     "build:kinetic-head": "node scripts/build-kinetic-head.mjs",
+    "build:kinetic-rest": "node scripts/build-kinetic-rest.mjs",
+    "build:images": "node scripts/build-static-images.mjs",
+    "build:og": "node scripts/build-og-image.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "check:cv": "node scripts/check-cv-facts.mjs",
+    "check:og": "node scripts/build-og-image.mjs --check",
+    "check:budget": "node scripts/check-build-budget.mjs",
     "check:links": "node scripts/check-internal-links.mjs",
-    "verify": "npm run check && npm run check:cv && npm run build && npm run check:links"
+    "verify": "npm run check && npm run check:cv && npm run check:og && npm run check:assets && npm run build && npm run check:budget && npm run check:links && npm run test:visual",
+    "check:assets": "node scripts/check-assets.mjs",
+    "test:visual": "playwright test"
   },
   "engines": {
     "node": ">=22 <23"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@playwright/test": "^1.62.1",
     "@types/three": "^0.185.1",
+    "gray-matter": "^4.0.3",
+    "parse5": "^7.3.0",
+    "satori": "^0.33.3",
     "sharp": "^0.35.3",
     "typescript": "^6.0.3"
   },
@@ -27,6 +38,7 @@
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource/cormorant-garamond": "^5.2.11",
     "@fontsource/inter": "^5.2.8",
+    "@fontsource/source-serif-4": "5.3.0",
     "astro": "^7.0.9",
     "lucide": "^1.24.0",
     "three": "^0.185.1"

@@ -1,5 +1,4 @@
 import { Box3, Group, Mesh, Object3D, Vector3, type Material } from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const MODEL_URL = '/assets/models/kinetic-head.glb';
 export const KINETIC_LAYER_COUNT = 63;
@@ -11,7 +10,8 @@ export type KineticLayer = {
 
 type KineticMaterialMap = Record<string, Material>;
 
-function loadKineticAsset() {
+async function loadKineticAsset() {
+  const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
   return new Promise<Group>((resolve, reject) => {
     new GLTFLoader().load(MODEL_URL, (gltf) => resolve(gltf.scene), undefined, reject);
   });

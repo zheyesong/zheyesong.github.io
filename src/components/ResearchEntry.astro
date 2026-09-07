@@ -1,0 +1,63 @@
+---
+import type { ResearchProject } from '../data/site';
+
+interface Props {
+  project: ResearchProject;
+  variant: 'home' | 'research' | 'cv';
+}
+
+const { project, variant } = Astro.props as Props;
+const resourceLabels = {
+  code: 'Code',
+  manuscript: 'Manuscript',
+  data: 'Data',
+} as const;
+const resources = Object.entries(project.resources ?? {}) as Array<
+  [keyof typeof resourceLabels, string]
+>;
+const detailHref = `/research/#${project.id}`;
+---
+
+<li
+  id={variant === 'research' ? project.id : undefined}
+  class:list={['project-entry', `project-entry--${variant}`]}
+  data-project-id={project.id}
+>
+  {variant !== 'home' && <div class="project-entry__meta">
+    <span class="catalogue-index">{project.catalogueId}</span>
+    <time>{project.period}</time>
+    <span>{project.status}</span>
+    {variant === 'research' && project.mentor && (
+      <p class="project-entry__people">
+        <span>{project.mentorLabel}: {project.mentor}</span>
+        <span>{project.affiliation}</span>
+      </p>
+    )}
+  </div>}
+  <div class="project-entry__content">
+    <h3>
+      {variant === 'research' ? project.title : <a href={detailHref}>{project.title}</a>}
+    </h3>
+    {variant === 'home' && (
+      <div class="project-entry__meta project-entry__meta--inline">
+        <span class="catalogue-index sr-only">{project.catalogueId}</span>
+        <span>{project.status}</span>
+        <time>{project.period}</time>
+      </div>
+    )}
+
+    <p class="project-entry__summary">{project.summary}</p>
+    {variant === 'research' && (
+      <ul class="project-entry__highlights">
+        {project.highlights.map((highlight) => <li>{highlight}</li>)}
+      </ul>
+    )}
+    {variant !== 'home' && <p class="project-entry__methods">{project.methods}</p>}
+    <nav class="project-entry__actions" aria-label={`Resources for ${project.title}`}>
+      {variant !== 'research' && <a href={detailHref}>Details</a>}
+      {resources.map(([kind, href]) => (
+        <a href={href} target="_blank" rel="noreferrer">{resourceLabels[kind]}</a>
+      ))}
+    </nav>
+  </div>
+</li>

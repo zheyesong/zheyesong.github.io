@@ -14,8 +14,8 @@ import {
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
-const sourcePath = join(root, 'public/assets/kinetic-head-master.png');
-const texturePath = join(root, 'public/assets/kinetic-head-texture.png');
+const sourcePath = join(root, 'public/assets/kinetic-head-master.webp');
+const texturePath = join(root, 'public/assets/kinetic-head-texture.webp');
 const outputPath = join(root, 'public/assets/models/kinetic-head.glb');
 const layerCount = 63;
 const contourSegments = 72;
@@ -118,7 +118,7 @@ async function readSubjectMask() {
     raw: { width, height, channels },
   })
     .joinChannel(softenedAlpha, { raw: { width, height, channels: 1 } })
-    .png()
+    .webp({ lossless: true, effort: 6, exact: true })
     .toFile(texturePath);
 
   const rowBounds = Array.from({ length: height }, () => null);
@@ -212,7 +212,8 @@ function compactGeometry(positions, uvs, sourceIndices) {
   );
   geometry.setAttribute('uv', new BufferAttribute(new Float32Array(compactUvs), 2));
   geometry.setIndex(compactIndices);
-  geometry.computeVertexNormals();
+  // Normals are deliberately omitted: every runtime material is an unlit
+  // MeshBasicMaterial, so a NORMAL attribute would ship ~412 KB of unused data.
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
   return geometry;
@@ -364,7 +365,7 @@ const cutMaterial = new MeshStandardMaterial({
 const scene = new Scene();
 scene.name = 'kinetic-head-63-layer-asset';
 scene.userData = {
-  source: 'kinetic-head-master.png',
+  source: 'kinetic-head-master.webp',
   layerCount,
   axisPixel: measurement.axisPixel,
   imageWidth: mask.width,

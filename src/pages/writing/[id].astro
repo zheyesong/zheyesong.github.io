@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/writing.css';
 import { formatWritingDate, getReadingStats } from '../../utils/writing';
 
 export async function getStaticPaths() {
@@ -24,7 +25,16 @@ const outline = headings.filter((heading) => heading.depth === 2);
 const stats = getReadingStats(entry.body ?? '');
 ---
 
-<BaseLayout title={`${entry.data.title} | Zheye Song`} description={entry.data.summary}>
+<BaseLayout
+  title={`${entry.data.title} | Zheye Song`}
+  description={entry.data.summary}
+  article={{
+    headline: entry.data.title,
+    datePublished: entry.data.date,
+    section: entry.data.category,
+    keywords: entry.data.tags,
+  }}
+>
   <article class="page-shell writing-post">
     <header class="writing-post__header">
       <nav class="writing-post__breadcrumb" aria-label="Breadcrumb">

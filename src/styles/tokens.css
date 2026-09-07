@@ -1,0 +1,71 @@
+/* Quiet Order: palette lives in src/data/palette.json and is applied by BaseLayout. */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 96px;
+  --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --display-serif: var(--serif);
+  --heading-serif: var(--serif);
+  --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --type-name: 80px;
+  --line-name: 88px;
+  --type-page: 48px;
+  --line-page: 56px;
+  --type-title: 28px;
+  --line-title: 36px;
+  --type-lead: 24px;
+  --line-lead: 32px;
+  --type-body: 18px;
+  --line-body: 32px;
+  --type-meta: 14px;
+  --line-meta: 24px;
+  --type-label: 12px;
+  --line-label: 16px;
+  --page-width: 1152px;
+  --gutter: 64px;
+  --grid-gap: 24px;
+  --columns: 12;
+  --label-span: 2;
+  --content-span: 10;
+  --hero-art-span: 4;
+  --hero-text-span: 8;
+  --head-width: 256px;
+  --reading-width: 68ch;
+}
+@media (min-width: 841px) and (max-width: 1199px) {
+  :root {
+    --gutter: 32px;
+    --columns: 8;
+    --label-span: 1;
+    --content-span: 7;
+    --hero-art-span: 3;
+    --hero-text-span: 5;
+    --head-width: 208px;
+  }
+}
+@media (max-width: 840px) {
+  :root {
+    --gutter: 20px;
+    --grid-gap: 16px;
+    --columns: 4;
+    --label-span: 4;
+    --content-span: 4;
+    --hero-art-span: 4;
+    --hero-text-span: 4;
+    --head-width: 160px;
+    --type-name: 48px;
+    --line-name: 56px;
+    --type-page: 36px;
+    --line-page: 44px;
+    --type-title: 24px;
+    --line-title: 32px;
+    --type-lead: 20px;
+    --line-lead: 28px;
+    --line-body: 28px;
+  }
+}

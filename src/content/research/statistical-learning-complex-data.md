@@ -1,5 +1,6 @@
 ---
 title: "Statistical learning for complex data"
+catalogueId: "R.03"
 summary: "Interpretable statistical learning for structured outcomes, survey data, and sparse decision problems."
 status: "Research interest"
 focus: "Complex outcomes · Multiple testing · Interpretable ML"

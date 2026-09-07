@@ -6,6 +6,7 @@ const research = defineCollection({
   loader: glob({ base: './src/content/research', pattern: '**/*.{md,mdx}' }),
   schema: z.object({
     title: z.string(),
+    catalogueId: z.string().regex(/^R\.\d{2}$/, 'Use an R.01-style research catalogue ID'),
     summary: z.string(),
     status: z.string().default('Research interest'),
     focus: z.string(),

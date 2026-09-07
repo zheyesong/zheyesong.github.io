@@ -2,16 +2,14 @@
 import { getCollection, render } from 'astro:content';
 import ResearchProjectList from '../../components/ResearchProjectList.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { researchProjects, selectedWork } from '../../data/site';
+import { researchProjects } from '../../data/site';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { orderResearchEntries } from '../../utils/research';
 
-const research = (await getCollection('research')).sort(
-  (a, b) => a.data.order - b.data.order,
-);
+const research = orderResearchEntries(await getCollection('research'));
 const rendered = await Promise.all(
   research.map(async (entry) => ({ entry, ...(await render(entry)) })),
 );
-const researchWork = selectedWork.filter((entry) => entry.kind === 'Research code');
 ---
 
 <BaseLayout
@@ -21,7 +19,7 @@ const researchWork = selectedWork.filter((entry) => entry.kind === 'Research cod
   <article class="page-shell interior-page">
     <header class="interior-page__header">
       <div>
-        <p class="page-folio">02</p>
+        <p class="page-folio">Folio 02</p>
         <h1>Research Interests</h1>
       </div>
       <p>
@@ -35,7 +33,7 @@ const researchWork = selectedWork.filter((entry) => entry.kind === 'Research cod
       {rendered.map(({ entry, Content }, index) => (
         <section id={entry.id} class="research-detail">
           <div class="research-detail__meta">
-            <span class="catalogue-index">R.{String(index + 1).padStart(2, '0')}</span>
+            <span class="catalogue-index">{entry.data.catalogueId}</span>
             <p>{entry.data.status}</p>
             <span>{entry.data.focus}</span>
           </div>
@@ -46,7 +44,7 @@ const researchWork = selectedWork.filter((entry) => entry.kind === 'Research cod
             {index === 0 && (
               <figure class="material-study">
                 <img
-                  src="/assets/kinetic-head-detail.png"
+                  src="/assets/kinetic-head-detail.webp"
                   alt="Close detail of the mirror-steel layers across the sculpture's face"
                   width="394"
                   height="240"
@@ -65,34 +63,11 @@ const researchWork = selectedWork.filter((entry) => entry.kind === 'Research cod
     </div>
 
     <section class="research-projects" aria-labelledby="research-projects-heading">
-      <SectionHeading index="04">
+      <SectionHeading index="01">
         <span id="research-projects-heading">Research Projects</span>
       </SectionHeading>
-      <ResearchProjectList projects={researchProjects} />
+      <ResearchProjectList projects={researchProjects} variant="research" />
     </section>
 
-    <section class="research-work" aria-labelledby="research-work-heading">
-      <SectionHeading index="05">
-        <span id="research-work-heading">Selected Research Code</span>
-      </SectionHeading>
-      <ol class="work-list work-list--research">
-        {researchWork.map((entry, index) => (
-          <li>
-            <a href={entry.href} target="_blank" rel="noreferrer">
-              <span class="catalogue-index">W.{String(index + 1).padStart(2, '0')}</span>
-              <div class="work-list__main">
-                <span class="work-list__title">{entry.title}</span>
-                <span class="work-list__summary">{entry.summary}</span>
-                <span class="work-list__methods">{entry.methods}</span>
-              </div>
-              <div class="work-list__meta">
-                <span>{entry.kind}</span>
-                <time>{entry.year}</time>
-              </div>
-            </a>
-          </li>
-        ))}
-      </ol>
-    </section>
   </article>
 </BaseLayout>

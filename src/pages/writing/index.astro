@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { formatWritingDate, getReadingStats } from '../../utils/writing';
+import '../../styles/writing.css';
 
 const entries = (await getCollection('writing'))
   .filter((entry) => !entry.data.draft)
@@ -16,10 +17,10 @@ const categories = [...new Set(entries.map((entry) => entry.data.category))];
 >
   <section class="page-shell writing-index" aria-labelledby="writing-title">
     <header class="writing-index__header">
-      <p class="page-folio">03 / Notes and essays</p>
+      <p class="page-folio">Folio 03</p>
       <h1 id="writing-title">Writing</h1>
       <p>
-        Research notes, reading notes, course projects, and expository writing on
+        Notes and essays on research, reading, course projects, and exposition in
         causal inference and statistical learning.
       </p>
     </header>

@@ -2,15 +2,21 @@
 import { getCollection } from 'astro:content';
 import KineticHead from '../components/KineticHead.astro';
 import ResearchFieldMap from '../components/ResearchFieldMap.astro';
+import ResearchProjectList from '../components/ResearchProjectList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
+import WritingPreview from '../components/WritingPreview.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { profile, selectedWork, site } from '../data/site';
+import { featuredResearchProjects, profile, site, websiteEducation } from '../data/site';
+import { orderResearchEntries } from '../utils/research';
+import '../styles/home.css';
 
-const research = (await getCollection('research'))
-  .filter((entry) => entry.data.featured)
-  .sort((a, b) => a.data.order - b.data.order);
+const research = orderResearchEntries(await getCollection('research'))
+  .filter((entry) => entry.data.featured);
 
-const featuredWork = selectedWork.filter((entry) => entry.featured);
+const recentWriting = (await getCollection('writing'))
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  .slice(0, 2);
 ---
 
 <BaseLayout>
@@ -19,72 +25,67 @@ const featuredWork = selectedWork.filter((entry) => entry.featured);
       <KineticHead />
     </div>
     <div class="hero__content">
-      <p class="page-folio">01</p>
       <h1 id="page-title">{profile.name}</h1>
-      <p class="hero__role">
-        {profile.role},<br />
-        {profile.institution}
-      </p>
+      <nav class="hero__links" aria-label="Profile links">
+        <a href={`mailto:${site.email}`}>Email</a>
+        <a href="/cv/">CV</a>
+        <a href={site.github} target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
       <div class="hero__statement">
         <p>{profile.statement}</p>
-        <p>{profile.focus}</p>
-      </div>
-      <div class="hero__links" aria-label="Profile links">
-        <a href={`mailto:${site.email}`}>Email</a>
-        <span aria-hidden="true"></span>
-        <a href="/cv/">CV</a>
-        <span aria-hidden="true"></span>
-        <a href={site.github} target="_blank" rel="noreferrer">GitHub</a>
       </div>
     </div>
   </section>
 
   <div class="home-content page-shell">
-    <section class="content-section" aria-labelledby="research-heading">
-      <SectionHeading index="01">
+    <section class="margin-section content-section" aria-labelledby="research-heading">
+      <SectionHeading variant="margin" index="01">
         <span id="research-heading">Research Interests</span>
       </SectionHeading>
-      <ResearchFieldMap fields={research.map((entry) => ({ id: entry.id, title: entry.data.title }))} />
+      <div class="section-body">
+      <ResearchFieldMap fields={research.map((entry) => ({
+        id: entry.id,
+        catalogueId: entry.data.catalogueId,
+        title: entry.data.title,
+      }))} />
+      </div>
     </section>
 
-    <section class="content-section" aria-labelledby="work-heading">
-      <SectionHeading index="02">
-        <span id="work-heading">Selected Work</span>
+    <section class="margin-section content-section content-section--research" aria-labelledby="work-heading">
+      <SectionHeading variant="margin" index="02">
+        <span id="work-heading">Selected Research</span>
       </SectionHeading>
-      <ol class="work-list">
-        {featuredWork.map((entry, index) => (
-          <li>
-            <a href={entry.href} target="_blank" rel="noreferrer">
-              <span class="catalogue-index">W.{String(index + 1).padStart(2, '0')}</span>
-              <div class="work-list__main">
-                <span class="work-list__title">{entry.title}</span>
-                <span class="work-list__summary">{entry.summary}</span>
-              </div>
-              <div class="work-list__meta">
-                <span>{entry.kind}</span>
-                <time>{entry.year}</time>
-              </div>
-            </a>
-          </li>
-        ))}
-      </ol>
+      <div class="section-body">
+      <ResearchProjectList projects={featuredResearchProjects} variant="home" />
+      </div>
     </section>
 
-    <section class="content-section" aria-labelledby="education-heading">
-      <SectionHeading index="03">
-        <span id="education-heading">Education</span>
+    {recentWriting.length > 0 && (
+      <section class="margin-section content-section content-section--writing" aria-labelledby="writing-heading">
+        <SectionHeading variant="margin" index="03">
+          <span id="writing-heading">Recent Writing</span>
+        </SectionHeading>
+      <div class="section-body">
+        <WritingPreview entries={recentWriting} />
+        </div>
+    </section>
+    )}
+
+    <section class="margin-section content-section content-section--record" aria-labelledby="record-heading">
+      <SectionHeading variant="margin" index="04">
+        <span id="record-heading">Academic Record</span>
       </SectionHeading>
-      <dl class="detail-table detail-table--education">
-        {profile.education.map((entry) => (
+      <div class="section-body">
+      <dl class="academic-record">
+        {websiteEducation.map((entry) => (
           <div>
             <dt>{entry.institution}</dt>
-            <dd>
-              {entry.degree}
-              <span class="detail-table__meta">{entry.period} · {entry.score}</span>
-            </dd>
+            <dd>{entry.degree}</dd>
+            <dd class="academic-record__period">{entry.period}</dd>
           </div>
         ))}
       </dl>
+      </div>
     </section>
 
   </div>

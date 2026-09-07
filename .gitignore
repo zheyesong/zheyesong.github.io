@@ -4,3 +4,5 @@ node_modules/
 dist/
 .astro/
 .cv-build/
+playwright-report/
+test-results/

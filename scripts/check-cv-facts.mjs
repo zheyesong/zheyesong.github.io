@@ -10,6 +10,7 @@ function normalize(value) {
   return value
     .toLowerCase()
     .replaceAll('\\_', '_')
+    .replaceAll('\\latex', 'latex')
     .replaceAll('--', '-')
     .replaceAll('sept', 'sep')
     .replace(/\s+/g, ' ')
@@ -20,7 +21,8 @@ const source = normalize(tex);
 const requiredFacts = [
   profile.profile.name,
   profile.site.email,
-  ...profile.profile.researchInterests,
+  profile.profile.institution,
+  ...profile.technicalSkills,
   ...profile.profile.education.flatMap((entry) => [
     entry.institution,
     entry.degree,
@@ -35,7 +37,7 @@ const requiredFacts = [
     project.affiliation,
   ]),
   ...profile.awards.flatMap((award) => [award.title, award.institution, award.year]),
-];
+].filter((fact) => typeof fact === 'string' && fact.length > 0);
 
 const missing = requiredFacts.filter((fact) => !source.includes(normalize(fact)));
 if (missing.length > 0) {

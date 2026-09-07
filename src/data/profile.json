@@ -2,79 +2,68 @@
   "site": {
     "name": "Zheye Song",
     "title": "Zheye Song | Causal Inference and Statistical Learning",
-    "description": "Academic homepage of Zheye Song, working on causal inference, policy learning, and statistical learning for complex data.",
+    "description": "Academic homepage of Zheye Song, an M.S. student in Biostatistics at the University of North Carolina at Chapel Hill, working on causal inference, policy learning, and statistical learning for complex data.",
     "url": "https://zheyesong.github.io",
-    "email": "song_zheye@163.com",
+    "email": "songzy@unc.edu",
     "github": "https://github.com/zheyesong"
   },
   "profile": {
     "name": "Zheye Song",
-    "role": "B.S. in Mathematics and Applied Mathematics",
-    "institution": "Fudan University",
+    "role": "M.S. Student in Biostatistics",
+    "institution": "University of North Carolina at Chapel Hill",
     "statement": "My research centers on causal inference, policy learning, and statistical learning for complex data.",
-    "focus": "I work on object-valued outcomes, heterogeneous treatment effects, evidence-based multiple testing, and interpretable health-risk modeling.",
+    "focusAreas": [
+      "Object-valued outcomes",
+      "Heterogeneous treatment effects",
+      "Evidence-based multiple testing",
+      "Interpretable health-risk modeling"
+    ],
     "education": [
       {
+        "catalogueId": "E.03",
+        "institution": "University of North Carolina at Chapel Hill",
+        "degree": "M.S. in Biostatistics",
+        "period": "Aug 2026 - Present"
+      },
+      {
+        "catalogueId": "E.01",
         "institution": "Fudan University",
         "degree": "B.S. in Mathematics and Applied Mathematics",
         "score": "87/100",
         "period": "Sep 2022 - Jun 2026"
       },
       {
+        "catalogueId": "E.02",
         "institution": "The Hong Kong Polytechnic University",
         "degree": "Exchange Student",
+        "visibleOnWebsite": false,
         "score": "3.97/4.3",
         "period": "Sep 2024 - Jan 2025"
       }
-    ],
-    "researchInterests": [
-      "Causal inference",
-      "Policy learning",
-      "Statistical learning for complex data"
     ]
   },
-  "selectedWork": [
+  "softwareProjects": [
     {
-      "title": "Modular Causal Meta-Learners for CATE Estimation",
-      "kind": "Research code",
-      "year": "2025-2026",
-      "summary": "A modular library of BART-based, cross-fitted CATE estimators with overlap-aware orthogonal-residual stacking.",
-      "methods": "BART · cross-fitting · CATE · simulation · IHDP/JOBS",
-      "href": "https://github.com/zheyesong/hybridfull-cate",
-      "relatedInterest": "Causal inference",
-      "featured": true
-    },
-    {
-      "title": "Survey-Based Health Risk Modeling",
-      "kind": "Research project",
-      "year": "2025-Present",
-      "summary": "An interpretable machine-learning pipeline for large-scale student health survey data.",
-      "methods": "Imputation · stratified evaluation · SHAP · class-imbalance handling",
-      "href": "/research/#health-risk-modeling",
-      "relatedInterest": "Statistical learning for complex data",
-      "featured": true
-    },
-    {
+      "catalogueId": "S.01",
       "title": "RSS Reader",
-      "kind": "Open-source software",
       "year": "2026",
       "summary": "A local-first, cross-platform RSS reader with desktop, web, and Android targets.",
       "methods": "Rust · Dioxus · SQLite",
-      "href": "https://github.com/zheyesong/Reader",
-      "relatedInterest": "Software",
-      "featured": false
+      "href": "https://github.com/zheyesong/Reader"
     }
   ],
   "researchProjects": [
     {
       "id": "metric-space-causal-inference",
+      "catalogueId": "P.01",
       "title": "Causal Inference in Metric Spaces via Distance Profiles",
-      "period": "2025.08 - 2026.05",
+      "period": "Aug 2025 - May 2026",
       "status": "Under Review",
       "mentorLabel": "Advisor",
       "mentor": "Zhiheng Zhang",
       "affiliation": "Tenure-Track Assistant Professor, SUFE",
       "summary": "A distance-profile framework for causal inference with object-valued outcomes in separable metric spaces.",
+      "featured": true,
       "highlights": [
         "Transformed metric-ball events into geometry-indexed binary potential-outcome contrasts.",
         "Established pointwise identification, doubly robust/AIPW estimation, Neyman orthogonality, and finite-grid simultaneous inference.",
@@ -83,31 +72,16 @@
       "methods": "Metric spaces · AIPW · Neyman orthogonality · simultaneous inference"
     },
     {
-      "id": "modular-cate-meta-learners",
-      "title": "Modular Causal Meta-Learners for CATE Estimation",
-      "period": "2025.04 - 2026.04",
-      "status": "Research Project",
-      "mentorLabel": "Advisor",
-      "mentor": "Jiaxi Yang",
-      "affiliation": "Alumni Researcher, Columbia University",
-      "summary": "A modular library of BART-based, cross-fitted CATE estimators with overlap-aware stacking.",
-      "highlights": [
-        "Separated S-, X-, R-, and BCF-inspired correction principles under a common implementation.",
-        "Implemented HybridFull, an overlap-aware orthogonal-residual stacking rule with propensity-stratified simplex weights.",
-        "Evaluated the estimators across S1-S6 simulations and IHDP/JOBS benchmarks."
-      ],
-      "methods": "BART · cross-fitting · CATE · simulation · IHDP/JOBS",
-      "href": "https://github.com/zheyesong/hybridfull-cate"
-    },
-    {
       "id": "relative-belief-multiple-testing",
+      "catalogueId": "P.03",
       "title": "Relative-Belief Multiple Testing under General Additive Loss",
-      "period": "2026.01 - Present",
+      "period": "Jan 2026 - Present",
       "status": "Ongoing",
       "mentorLabel": "Collaborator",
       "mentor": "Qiaoyu Liang",
       "affiliation": "Ph.D. student, University of Toronto",
       "summary": "An extension of relative-belief asymptotic Bayes optimality under sparsity from additive 0-1 loss to general additive loss.",
+      "featured": false,
       "highlights": [
         "Derived the loss-adjusted Bayes oracle, fixed-threshold ABOS window, and risk scale.",
         "Developed regular scale-prior threshold theory using local prior-predictive expansion.",
@@ -117,41 +91,81 @@
     },
     {
       "id": "health-risk-modeling",
+      "catalogueId": "P.04",
       "title": "Survey-Based Health Risk Modeling with Interpretable Machine Learning",
-      "period": "2025.11 - Present",
-      "status": "Intern Project",
+      "period": "Nov 2025 - Present",
+      "status": "Under Review",
       "mentorLabel": "Advisor",
       "mentor": "Kun Tang",
       "affiliation": "Associate Professor, Tsinghua University",
       "summary": "An interpretable machine-learning pipeline for large-scale student health survey data.",
+      "featured": false,
       "highlights": [
         "Prepared analysis-ready questionnaire data through cleaning and feature engineering.",
         "Built the full pipeline for imputation, stratified evaluation, six-model benchmarking, and class-imbalance handling.",
         "Produced interpretable analyses using feature importance and SHAP outputs."
       ],
       "methods": "Imputation · stratified evaluation · SHAP · class-imbalance handling"
+    },
+    {
+      "id": "modular-cate-meta-learners",
+      "catalogueId": "P.02",
+      "title": "Modular Causal Meta-Learners for CATE Estimation",
+      "period": "Apr 2025 - Apr 2026",
+      "status": "Research Project",
+      "summary": "A modular library of BART-based, cross-fitted CATE estimators with overlap-aware stacking.",
+      "featured": false,
+      "highlights": [
+        "Separated S-, X-, R-, and BCF-inspired correction principles under a common implementation.",
+        "Implemented HybridFull, an overlap-aware orthogonal-residual stacking rule with propensity-stratified simplex weights.",
+        "Evaluated the estimators across S1-S6 simulations and IHDP/JOBS benchmarks."
+      ],
+      "methods": "BART · cross-fitting · CATE · simulation · IHDP/JOBS",
+      "resources": {
+        "code": "https://github.com/zheyesong/hybridfull-cate"
+      }
     }
   ],
   "awards": [
     {
+      "catalogueId": "H.01",
       "title": "Freshman Scholarship, First Prize",
       "institution": "Fudan University",
       "year": "2022"
     },
     {
+      "catalogueId": "H.02",
       "title": "Basic Discipline Scholarship",
       "institution": "Fudan University",
       "year": "2023-2024"
     }
   ],
   "cv": {
-    "updated": "July 2026",
+    "updated": "September 2026",
     "pdfHref": "/Zheye-Song-CV.pdf"
   },
   "navigation": [
-    { "label": "Home", "href": "/" },
-    { "label": "Research", "href": "/research/" },
-    { "label": "Writing", "href": "/writing/" },
-    { "label": "CV", "href": "/cv/" }
+    {
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "Research",
+      "href": "/research/"
+    },
+    {
+      "label": "Writing",
+      "href": "/writing/"
+    },
+    {
+      "label": "CV",
+      "href": "/cv/"
+    }
+  ],
+  "technicalSkills": [
+    "Python",
+    "R",
+    "Git",
+    "LaTeX"
   ]
 }

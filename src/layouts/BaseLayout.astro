@@ -1,26 +1,36 @@
 ---
-import '@fontsource/cormorant-garamond/latin-400.css';
-import '@fontsource/cormorant-garamond/latin-500.css';
-import '@fontsource/inter/latin-400.css';
-import '@fontsource/inter/latin-500.css';
-import '@fontsource/inter/latin-600.css';
+import '../styles/fonts.css';
 import '../styles/global.css';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import { profile, site } from '../data/site';
+import palette from '../data/palette.json';
+
+const colorTokens = Object.entries(palette).map(([name, value]) => `--${name}:${value}`).join(';');
+
+interface ArticleMeta {
+  headline: string;
+  datePublished: string;
+  section?: string;
+  keywords?: string[];
+}
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
   noIndex?: boolean;
+  article?: ArticleMeta;
 }
 
 const {
   title = site.title,
   description = site.description,
-  image = '/assets/og-image.png',
+  image = '/assets/og-image.jpg',
+  imageAlt = 'Zheye Song with a mirror-steel kinetic portrait and research fields in causal inference, policy learning, and statistical learning.',
   noIndex = false,
+  article,
 } = Astro.props as Props;
 const canonical = new URL(Astro.url.pathname, site.url);
 const imageUrl = new URL(image, site.url);
@@ -43,27 +53,56 @@ const personSchema = {
     'Complex data',
   ],
 };
+
+const articleSchema = article && {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: article.headline,
+  description,
+  datePublished: article.datePublished,
+  dateModified: article.datePublished,
+  inLanguage: 'en',
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonical.href },
+  image: imageUrl.href,
+  author: { '@type': 'Person', name: profile.name, url: site.url },
+  publisher: { '@type': 'Person', name: profile.name, url: site.url },
+  ...(article.section ? { articleSection: article.section } : {}),
+  ...(article.keywords?.length ? { keywords: article.keywords.join(', ') } : {}),
+};
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" style={colorTokens}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     {noIndex && <meta name="robots" content="noindex" />}
-    <meta name="theme-color" content="#ffffff" />
-    <meta property="og:type" content="website" />
+    <meta name="theme-color" content={palette.paper} />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    {article && <meta property="article:published_time" content={article.datePublished} />}
+    {article && <meta property="article:author" content={profile.name} />}
+    {article?.section && <meta property="article:section" content={article.section} />}
+    {article?.keywords?.map((keyword) => <meta property="article:tag" content={keyword} />)}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
     {!noIndex && <link rel="canonical" href={canonical} />}
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <title>{title}</title>
     <script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
+    {articleSchema && (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)}></script>
+    )}
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>

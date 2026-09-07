@@ -1,0 +1,70 @@
+.writing-index__header, .writing-post__header {
+  margin-bottom: var(--space-7);
+}
+.writing-index__header > p:last-child, .writing-post__deck {
+  max-width: var(--reading-width); font: var(--type-body)/var(--line-body) var(--serif);
+}
+.writing-index__header h1, .writing-post__header h1 { margin-bottom: var(--space-4); }
+.writing-index__tools {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: var(--space-3); padding-bottom: var(--space-3); border-bottom: 1px solid var(--line);
+  color: var(--muted); font: var(--type-meta)/var(--line-meta) var(--sans);
+}
+.writing-index__tools > p { margin: 0; }
+.writing-filter { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+.writing-filter button {
+  min-width: var(--space-6); min-height: var(--space-6); padding: var(--space-2) 0;
+  border: 0; border-bottom: 2px solid transparent; background: transparent;
+  font: inherit; color: var(--muted); cursor: pointer;
+}
+.writing-filter button:hover, .writing-filter button[aria-pressed="true"] {
+  color: var(--accent); border-bottom-color: var(--accent);
+}
+.writing-feed > li { border-bottom: 1px solid var(--line); }
+.writing-feed__entry { padding-block: var(--space-5); }
+.writing-feed__content > p {
+  max-width: var(--reading-width); font: var(--type-body)/var(--line-body) var(--serif);
+}
+.writing-feed__read {
+  grid-column: calc(var(--label-span) + 1) / -1;
+  display: inline-flex; align-items: center; justify-self: start; gap: var(--space-2);
+  min-height: var(--space-6); font: var(--type-meta)/var(--line-meta) var(--sans);
+}
+.writing-tags {
+  display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3);
+  list-style: none; padding: 0; margin: var(--space-3) 0 0;
+  color: var(--muted); font: var(--type-label)/var(--line-label) var(--sans);
+}
+.writing-tags li::before { content: "#"; color: var(--accent); }
+.writing-post__header {
+  padding-left: calc((100% - (var(--columns) - 1) * var(--grid-gap)) / var(--columns) * var(--label-span) + var(--grid-gap) * var(--label-span));
+}
+.writing-post__header h1 { max-width: 24ch; }
+.writing-post__breadcrumb {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+  margin-bottom: var(--space-4); color: var(--muted); font: var(--type-meta)/var(--line-meta) var(--sans);
+}
+.writing-post__breadcrumb a { display: inline-flex; align-items: center; min-height: var(--space-6); }
+.writing-post__meta { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); color: var(--muted); font: var(--type-meta)/var(--line-meta) var(--sans); }
+.writing-post__outline {
+  align-self: start; position: sticky; top: var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-2);
+  font: var(--type-meta)/20px var(--sans);
+}
+.writing-post__column { grid-column: calc(var(--label-span) + 1) / -1; }
+.writing-post__outline p { margin: 0 0 var(--space-2); color: var(--accent); font: var(--type-label)/var(--line-label) var(--sans); text-transform: uppercase; }
+.writing-post__outline a { display: flex; align-items: center; min-height: var(--space-6); }
+.prose--reading > :first-child { margin-top: 0; }
+.writing-post__footer { margin-top: var(--space-7); padding-top: var(--space-3); border-top: 1px solid var(--line); }
+.writing-post__footer > p { color: var(--muted); font: var(--type-label)/var(--line-label) var(--sans); }
+.writing-post__pager { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-6); padding-block: var(--space-4); border-block: 1px solid var(--line); }
+.writing-post__pager a { display: flex; flex-direction: column; gap: var(--space-2); min-height: var(--space-6); }
+.writing-post__pager span { color: var(--muted); font: var(--type-label)/var(--line-label) var(--sans); }
+.writing-post__pager strong { font: 400 20px/28px var(--serif); }
+@media (max-width: 840px) {
+  .writing-post__header { padding-left: 0; }
+  .writing-post__outline { position: static; padding-bottom: var(--space-4); border-bottom: 1px solid var(--line); }
+  .writing-feed__read { grid-column: 1 / -1; }
+  .writing-post__column { grid-column: 1 / -1; }
+  .writing-post__pager { grid-template-columns: 1fr; }
+}

@@ -1,8 +1,13 @@
 ---
+import { getCollection } from 'astro:content';
 import ResearchProjectList from '../../components/ResearchProjectList.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { awards, cv, profile, researchProjects, site } from '../../data/site';
+import { awards, cv, profile, researchProjects, site, technicalSkills, websiteEducation } from '../../data/site';
+import { orderResearchEntries } from '../../utils/research';
+import '../../styles/cv.css';
+
+const research = orderResearchEntries(await getCollection('research'));
 ---
 
 <BaseLayout
@@ -12,7 +17,7 @@ import { awards, cv, profile, researchProjects, site } from '../../data/site';
   <article class="page-shell interior-page cv-page">
     <header class="interior-page__header cv-page__header">
       <div>
-        <p class="page-folio">04</p>
+        <p class="page-folio">Folio 04</p>
         <h1>Curriculum Vitae</h1>
         <p>{profile.role}, {profile.institution}</p>
       </div>
@@ -30,13 +35,13 @@ import { awards, cv, profile, researchProjects, site } from '../../data/site';
     </header>
 
     <section class="cv-section">
-      <SectionHeading index="A">Education</SectionHeading>
-      {profile.education.map((entry, index) => (
+      <SectionHeading index="01">Education</SectionHeading>
+      {websiteEducation.map((entry) => (
         <div class="cv-entry">
           <div class="cv-entry__meta">
-            <p class="catalogue-index">E.{String(index + 1).padStart(2, '0')}</p>
+            <p class="catalogue-index">{entry.catalogueId}</p>
             <p>{entry.period}</p>
-            <p>{entry.score}</p>
+            {entry.score && <p>{entry.score}</p>}
           </div>
           <div>
             <h3>{entry.institution}</h3>
@@ -47,28 +52,33 @@ import { awards, cv, profile, researchProjects, site } from '../../data/site';
     </section>
 
     <section class="cv-section">
-      <SectionHeading index="B">Research Interests</SectionHeading>
+      <SectionHeading index="02">Research Interests</SectionHeading>
       <ul class="plain-list">
-        {profile.researchInterests.map((interest, index) => (
+        {research.map((interest) => (
           <li>
-            <span class="catalogue-index">R.{String(index + 1).padStart(2, '0')}</span>
-            <span>{interest}</span>
+            <span class="catalogue-index">{interest.data.catalogueId}</span>
+            <span>{interest.data.title}</span>
           </li>
         ))}
       </ul>
     </section>
 
     <section class="cv-section">
-      <SectionHeading index="C">Research Projects</SectionHeading>
-      <ResearchProjectList projects={researchProjects} compact />
+      <SectionHeading index="03">Research Projects</SectionHeading>
+      <ResearchProjectList projects={researchProjects} variant="cv" />
     </section>
 
     <section class="cv-section">
-      <SectionHeading index="D">Honors and Awards</SectionHeading>
-      {awards.map((award, index) => (
+      <SectionHeading index="04">Technical Skills</SectionHeading>
+      <p>Programming: {technicalSkills.join(', ')}</p>
+    </section>
+
+    <section class="cv-section">
+      <SectionHeading index="05">Honors and Awards</SectionHeading>
+      {awards.map((award) => (
         <div class="cv-entry">
           <div class="cv-entry__meta">
-            <p class="catalogue-index">A.{String(index + 1).padStart(2, '0')}</p>
+            <p class="catalogue-index">{award.catalogueId}</p>
             <p>{award.year}</p>
           </div>
           <div>

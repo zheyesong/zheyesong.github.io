@@ -2,38 +2,113 @@
   class="kinetic-head"
   data-kinetic-head
 >
-  <img
-    class="kinetic-head__fallback"
-    src="/assets/kinetic-head-master.png"
-    alt="Chrome head assembled from horizontal mirror-steel layers"
-    decoding="async"
-    fetchpriority="high"
-    draggable="false"
-  />
+  <picture>
+    <source srcset="/assets/kinetic-head-rest.avif" type="image/avif" />
+    <img
+      class="kinetic-head__fallback"
+      src="/assets/kinetic-head-rest.webp"
+      width="394"
+      height="560"
+      alt="Chrome head assembled from horizontal mirror-steel layers"
+      decoding="async"
+      fetchpriority="high"
+      loading="eager"
+      draggable="false"
+    />
+  </picture>
   <canvas class="kinetic-head__canvas" data-kinetic-canvas aria-hidden="true"></canvas>
   <button
     class="kinetic-head__control"
     type="button"
+    hidden
     data-kinetic-trigger
     aria-label="Play sculpture rotation"
     data-tooltip="Play sculpture rotation"
-  ></button>
+  >
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M7.5 4.4A8.5 8.5 0 0 1 20.3 9" />
+      <path d="m20.3 4.9.1 4.3-4.3.1" />
+      <path d="M16.5 19.6A8.5 8.5 0 0 1 3.7 15" />
+      <path d="m3.7 19.1-.1-4.3 4.3-.1" />
+      <ellipse cx="12" cy="12" rx="3.5" ry="8.5" />
+    </svg>
+  </button>
 </div>
 
 <script>
-  const loadKineticHead = () => {
-    void import('../scripts/kinetic-head').then(({ initKineticHeads }) => {
-      initKineticHeads();
-    });
-  };
+  document.querySelectorAll<HTMLElement>('[data-kinetic-head]').forEach((root) => {
+    const trigger = root.querySelector<HTMLButtonElement>('[data-kinetic-trigger]');
+    if (!trigger) return;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const abort = new AbortController();
+    let controller: Awaited<ReturnType<typeof import('../scripts/kinetic-head').initKineticHead>> | undefined;
+    let loading: Promise<void> | undefined;
+    let playWhenReady = false;
+    let failed = false;
+    trigger.hidden = false;
+    root.dataset.reducedMotion = String(motion.matches);
 
-  const idleWindow = window as Window & {
-    requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
-  };
+    const load = (shouldPlay: boolean) => {
+      if (motion.matches || failed || abort.signal.aborted) return;
+      if (controller) {
+        if (shouldPlay) controller.play();
+        return;
+      }
+      playWhenReady ||= shouldPlay;
+      if (loading) return;
+      root.dataset.loading = 'true';
+      trigger.setAttribute('aria-busy', 'true');
+      trigger.dataset.tooltip = 'Preparing sculpture';
+      loading = import('../scripts/kinetic-head')
+        .then(async ({ initKineticHead }) => {
+          controller = await initKineticHead(root, abort.signal);
+          controller.setReducedMotion(motion.matches);
+          root.dataset.loading = 'false';
+          trigger.removeAttribute('aria-busy');
+          if (playWhenReady && !motion.matches) controller.play();
+          playWhenReady = false;
+        })
+        .catch((error) => {
+          if (!abort.signal.aborted) console.warn('The kinetic sculpture could not load.', error);
+          failed = true;
+          root.dataset.loading = 'false';
+          root.dataset.phase = 'failed';
+          root.dataset.canvasActive = 'false';
+          trigger.removeAttribute('aria-busy');
+          trigger.hidden = true;
+        });
+    };
 
-  if (idleWindow.requestIdleCallback) {
-    idleWindow.requestIdleCallback(loadKineticHead, { timeout: 1800 });
-  } else {
-    globalThis.setTimeout(loadKineticHead, 600);
-  }
+    const onMotionChange = () => {
+      root.dataset.reducedMotion = String(motion.matches);
+      if (motion.matches) playWhenReady = false;
+      controller?.setReducedMotion(motion.matches);
+    };
+    motion.addEventListener('change', onMotionChange);
+    root.addEventListener('pointerenter', (event) => {
+      if (event.pointerType === 'mouse') load(true);
+    }, { signal: abort.signal });
+    trigger.addEventListener('focus', () => load(false), { signal: abort.signal });
+    trigger.addEventListener('click', () => load(true), { signal: abort.signal });
+    window.addEventListener('pagehide', (event) => {
+      if (event.persisted) {
+        controller?.setReducedMotion(true);
+        return;
+      }
+      abort.abort();
+      controller?.dispose();
+      motion.removeEventListener('change', onMotionChange);
+    }, { signal: abort.signal });
+    window.addEventListener('pageshow', onMotionChange, { signal: abort.signal });
+  });
 </script>

@@ -1,56 +1,13 @@
 ---
-interface Field {
-  id: string;
-  title: string;
-}
-
-interface Props {
-  fields: Field[];
-}
-
+interface Field { id: string; catalogueId: string; title: string; }
+interface Props { fields: Field[]; }
 const { fields } = Astro.props as Props;
-const [causal, policy, learning] = fields;
 ---
 
-<figure class="research-map">
-  <div
-    class="research-map__stage"
-    role="group"
-    aria-label="Research fields and the more specific topics formed by their intersections"
-  >
-    <span class="research-map__circle research-map__circle--causal" aria-hidden="true"></span>
-    <span class="research-map__circle research-map__circle--policy" aria-hidden="true"></span>
-    <span class="research-map__circle research-map__circle--learning" aria-hidden="true"></span>
-
-    <a class="research-map__field research-map__field--causal" href={`/research/#${causal.id}`}>
-      <span>R.01</span>
-      {causal.title}
-    </a>
-    <a class="research-map__field research-map__field--policy" href={`/research/#${policy.id}`}>
-      <span>R.02</span>
-      {policy.title}
-    </a>
-    <a class="research-map__field research-map__field--learning" href={`/research/#${learning.id}`}>
-      <span>R.03</span>
-      {learning.title}
-    </a>
-
-    <span class="research-map__topic research-map__topic--causal-policy">
-      Heterogeneous<br />treatment effects
-    </span>
-    <span class="research-map__topic research-map__topic--causal-learning">
-      Object-valued<br />outcomes
-    </span>
-    <span class="research-map__topic research-map__topic--policy-learning">
-      Interpretable<br />decision rules
-    </span>
-    <span class="research-map__topic research-map__topic--center">
-      Robust learning<br />under uncertainty
-    </span>
-  </div>
-  <figcaption class="sr-only">
-    Causal inference, policy learning, and statistical learning for complex data overlap through
-    heterogeneous treatment effects, object-valued outcomes, interpretable decision rules, and
-    robust learning under uncertainty.
-  </figcaption>
-</figure>
+<ul class="research-fields" aria-label="Research directions">
+  {fields.map((field) => (
+    <li>
+      <a href={`/research/#${field.id}`} data-field-id={field.id}>{field.title}</a>
+    </li>
+  ))}
+</ul>

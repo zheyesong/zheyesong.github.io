@@ -2,13 +2,14 @@
 interface Props {
   as?: 'h2' | 'h1';
   index?: string;
+  variant?: 'default' | 'margin';
 }
 
-const { as = 'h2', index } = Astro.props as Props;
+const { as = 'h2', index, variant = 'default' } = Astro.props as Props;
 const Tag = as;
 ---
 
-<div class:list={['section-heading', { 'section-heading--indexed': index }] }>
+<div class:list={['section-heading', `section-heading--${variant}`, { 'section-heading--indexed': index }] }>
   {index && (
     <p class="section-heading__index">{index}</p>
   )}

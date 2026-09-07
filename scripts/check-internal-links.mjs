@@ -1,6 +1,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { dirname, extname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parse } from 'parse5';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const dist = join(root, 'dist');
@@ -24,6 +25,12 @@ async function exists(path) {
   }
 }
 
+function* walkNodes(node) {
+  yield node;
+  for (const child of node.childNodes ?? []) yield* walkNodes(child);
+  if (node.content) yield* walkNodes(node.content);
+}
+
 function routeForFile(file) {
   const path = relative(dist, file).split(sep).join('/');
   if (path === 'index.html') return '/';
@@ -40,30 +47,46 @@ function candidatesForPath(pathname) {
 
 const htmlFiles = await collectHtml(dist);
 const failures = [];
+const behaviorFailures = [];
 let checked = 0;
 
 for (const file of htmlFiles) {
   const html = await readFile(file, 'utf8');
   const route = routeForFile(file);
-  const attributes = html.matchAll(/\b(?:href|src)\s*=\s*(?:"([^"]*)"|'([^']*)')/gi);
+  const document = parse(html);
 
-  for (const match of attributes) {
-    const value = match[1] ?? match[2];
-    if (!value || /^(?:mailto:|tel:|data:|javascript:)/i.test(value)) continue;
+  for (const node of walkNodes(document)) {
+    if (!node.attrs) continue;
+    const attributes = new Map(node.attrs.map((attribute) => [attribute.name, attribute.value]));
 
-    const url = new URL(value, `https://internal.test${route}`);
-    if (!siteOrigins.has(url.origin)) continue;
+    for (const attributeName of ['href', 'src']) {
+      const value = attributes.get(attributeName);
+      if (!value || /^(?:mailto:|tel:|data:|javascript:)/i.test(value)) continue;
 
-    checked += 1;
-    const candidates = candidatesForPath(url.pathname);
-    const matches = await Promise.all(candidates.map(exists));
-    if (!matches.some(Boolean)) failures.push(`${route} -> ${value}`);
+      const url = new URL(value, `https://internal.test${route}`);
+      if (!siteOrigins.has(url.origin)) continue;
+
+      checked += 1;
+      const candidates = candidatesForPath(url.pathname);
+      const matches = await Promise.all(candidates.map(exists));
+      if (!matches.some(Boolean)) failures.push(`${route} -> ${value}`);
+
+      if (node.nodeName === 'a' && attributes.get('target') === '_blank') {
+        behaviorFailures.push(`${route} -> ${value}`);
+      }
+    }
   }
 }
 
 if (failures.length > 0) {
   console.error('Missing internal link targets:');
   failures.forEach((failure) => console.error(`- ${failure}`));
+  process.exit(1);
+}
+
+if (behaviorFailures.length > 0) {
+  console.error('Internal links must open in the current tab:');
+  behaviorFailures.forEach((failure) => console.error(`- ${failure}`));
   process.exit(1);
 }
 
