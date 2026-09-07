@@ -16,6 +16,7 @@
       draggable="false"
     />
   </picture>
+  <canvas class="kinetic-head__poster" data-kinetic-poster aria-hidden="true" hidden></canvas>
   <canvas class="kinetic-head__canvas" data-kinetic-canvas aria-hidden="true"></canvas>
   <button
     class="kinetic-head__control"
@@ -51,6 +52,23 @@
     if (!trigger) return;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const abort = new AbortController();
+    const image = root.querySelector<HTMLImageElement>('.kinetic-head__fallback');
+    const poster = root.querySelector<HTMLCanvasElement>('[data-kinetic-poster]');
+    // Preserve the decoded poster pixels. A canvas surface follows WebGL's CSS
+    // compositing path; <img> downsampling differs on Linux/Chromium. Draw once,
+    // without importing Three.js or changing the scene's fixed sampling grid.
+    image?.decode().then(() => {
+      if (!poster || abort.signal.aborted || !root.isConnected) return;
+      const context = poster.getContext('2d');
+      if (!context) return;
+      poster.width = image.naturalWidth;
+      poster.height = image.naturalHeight;
+      context.drawImage(image, 0, 0);
+      poster.hidden = false;
+      root.dataset.posterReady = 'true';
+    }).catch(() => {
+      // The original picture, including its accessible alt text, remains below.
+    });
     let controller: Awaited<ReturnType<typeof import('../scripts/kinetic-head').initKineticHead>> | undefined;
     let loading: Promise<void> | undefined;
     let playWhenReady = false;

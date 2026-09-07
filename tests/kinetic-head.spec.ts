@@ -2,6 +2,10 @@ import { expect, test } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import sharp from 'sharp';
+import { attachVisualDiagnostics } from './visual-diagnostics';
+import { comparePortraits, portraitMatches, portraitMetrics } from './portrait-quality';
+
+test.use({ video: 'on' });
 
 test('web-only education visibility and concise hero identity', async ({ page }) => {
   await page.goto('/');
@@ -48,25 +52,41 @@ test('static image and zero-angle canvas share their appearance', async ({ page 
   await page.evaluate(() => document.fonts.ready);
   await page.locator('.kinetic-head__fallback').evaluate((image: HTMLImageElement) => image.decode());
   const head = page.locator('[data-kinetic-head]');
+  await expect(head).toHaveAttribute('data-poster-ready', 'true');
   await page.getByRole('button', { name: 'Play sculpture rotation', exact: true }).focus();
   await expect(head).toHaveAttribute('data-ready', 'true');
+  await attachVisualDiagnostics(page, testInfo);
   await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
   const options = { style: '.kinetic-head__control { visibility: hidden !important; }' };
   const poster = await head.screenshot({ ...options, path: testInfo.outputPath('poster.png') });
   // Expose the already-rendered rest frame, without playing or changing materials.
-  await page.locator('canvas').evaluate((canvas) => {
+  await page.locator('[data-kinetic-canvas]').evaluate((canvas) => {
     canvas.style.transition = 'none';
     canvas.style.opacity = '1';
   });
   const canvas = await head.screenshot({ ...options, path: testInfo.outputPath('zero-angle.png') });
-  const a = await sharp(poster).removeAlpha().raw().toBuffer();
-  const b = await sharp(canvas).removeAlpha().raw().toBuffer();
-  expect(a.length).toBe(b.length);
-  const meanError = a.reduce((sum, value, index) => sum + Math.abs(value - b[index]), 0) / a.length;
+  const metrics = await comparePortraits(poster, canvas);
   await testInfo.attach('poster', { body: poster, contentType: 'image/png' });
   await testInfo.attach('zero-angle-canvas', { body: canvas, contentType: 'image/png' });
-  await testInfo.attach('pixel-comparison', { body: `Mean absolute RGB error: ${meanError.toFixed(3)} / 255`, contentType: 'text/plain' });
-  expect(meanError).toBeLessThan(2);
+  await testInfo.attach('pixel-comparison', { body: JSON.stringify(metrics), contentType: 'application/json' });
+  console.log(`Portrait quality: ${JSON.stringify(metrics)}`);
+  // Linux SwiftShader and the Metal-exported poster differ at subpixel edges.
+  // Keep the original hardware-Mac bound; Linux also must pass all three
+  // independent, unfiltered colour/contrast/detail gates below.
+  expect(metrics.meanError).toBeLessThan(process.platform === 'linux' ? 4 : 2);
+  expect(metrics.channelBias).toBeLessThan(1);
+  expect(metrics.contrastChange).toBeLessThan(0.02);
+  expect(metrics.edgeChange).toBeLessThan(0.03);
+  await page.locator('[data-kinetic-canvas]').evaluate((canvas) => {
+    canvas.style.removeProperty('transition');
+    canvas.style.removeProperty('opacity');
+  });
+  await page.mouse.move(0, 0);
+  await page.getByRole('button', { name: 'Play sculpture rotation', exact: true }).press('Enter');
+  await expect(head).toHaveAttribute('data-phase', 'running');
+  await expect(head).toHaveAttribute('data-phase', 'idle', { timeout: 11_000 });
+  const settled = await head.screenshot({ ...options, path: testInfo.outputPath('settled-poster.png') });
+  expect((await comparePortraits(poster, settled)).meanError).toBeLessThan(0.01);
 });
 });
 }
@@ -114,10 +134,24 @@ test('reduced motion stops a running sequence and can be turned off again', asyn
   await expect(head).toHaveAttribute('data-running', 'false');
   await expect(head).toHaveAttribute('data-canvas-active', 'false');
   await expect(head).toHaveAttribute('data-max-layer-angle', '0.0000');
-  await expect(page.locator('canvas')).toHaveCSS('opacity', '0');
+  await expect(page.locator('[data-kinetic-canvas]')).toHaveCSS('opacity', '0');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await button.press('Space');
   await expect(head).toHaveAttribute('data-phase', 'running');
+});
+
+test('portrait quality gates reject blur, lighting changes and shifted layers', async () => {
+  const source = await readFile('public/assets/kinetic-head-rest.webp');
+  const { data, info } = await sharp(source).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const valid = portraitMetrics(data, data, info.width, info.height);
+  expect(portraitMatches(valid)).toBe(true);
+  const blurred = await sharp(source).blur(1).removeAlpha().raw().toBuffer();
+  const brightened = Uint8Array.from(data, (value) => Math.min(255, value + 8));
+  const lowerContrast = Uint8Array.from(data, (value) => Math.round(128 + (value - 128) * 0.9));
+  const shifted = Uint8Array.from(data, (_, index) => data[(index + info.width * 3) % data.length]);
+  for (const altered of [blurred, brightened, lowerContrast, shifted]) {
+    expect(portraitMatches(portraitMetrics(data, altered, info.width, info.height))).toBe(false);
+  }
 });
 
 test('failed model loading keeps the poster and navigation usable', async ({ page }) => {
