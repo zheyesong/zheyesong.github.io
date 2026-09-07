@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { attachVisualDiagnostics } from './visual-diagnostics';
 
 const viewports = [
   { width: 1440, height: 900, head: 256, heading: 80 },
@@ -150,9 +151,11 @@ test('3D assets load only after interaction and return to the static pose', asyn
 });
 
 for (const viewport of [{ width: 1200, height: 900 }, { width: 390, height: 844 }]) {
-  test(`homepage visual regression at ${viewport.width}px`, async ({ page }) => {
+  test(`homepage visual regression at ${viewport.width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize(viewport);
     await page.goto('/');
+    await page.evaluate(() => document.fonts.ready);
+    await attachVisualDiagnostics(page, testInfo);
     const regions = [
       ['identity', '.hero'],
       ['research-map', '[aria-labelledby="research-heading"]'],

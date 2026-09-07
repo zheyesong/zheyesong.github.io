@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import sharp from 'sharp';
+import { attachVisualDiagnostics } from './visual-diagnostics';
 
 test('web-only education visibility and concise hero identity', async ({ page }) => {
   await page.goto('/');
@@ -50,17 +51,35 @@ test('static image and zero-angle canvas share their appearance', async ({ page 
   const head = page.locator('[data-kinetic-head]');
   await page.getByRole('button', { name: 'Play sculpture rotation', exact: true }).focus();
   await expect(head).toHaveAttribute('data-ready', 'true');
+  await attachVisualDiagnostics(page, testInfo);
   await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
   const options = { style: '.kinetic-head__control { visibility: hidden !important; }' };
   const poster = await head.screenshot({ ...options, path: testInfo.outputPath('poster.png') });
+  // Diagnostic only: retain the exact decoded poster pixels, but composite them
+  // through a canvas so the browser uses the same CSS sampling path as WebGL.
+  await head.evaluate(async (root) => {
+    const image = root.querySelector<HTMLImageElement>('img')!;
+    await image.decode();
+    const surface = document.createElement('canvas');
+    surface.width = image.naturalWidth;
+    surface.height = image.naturalHeight;
+    surface.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+    surface.dataset.posterDiagnostic = '';
+    surface.getContext('2d')!.drawImage(image, 0, 0);
+    root.insertBefore(surface, root.querySelector('[data-kinetic-canvas]'));
+  });
+  const canvasPoster = await head.screenshot({ ...options, path: testInfo.outputPath('canvas-poster.png') });
   // Expose the already-rendered rest frame, without playing or changing materials.
-  await page.locator('canvas').evaluate((canvas) => {
+  await page.locator('[data-kinetic-canvas]').evaluate((canvas) => {
     canvas.style.transition = 'none';
     canvas.style.opacity = '1';
   });
   const canvas = await head.screenshot({ ...options, path: testInfo.outputPath('zero-angle.png') });
   const a = await sharp(poster).removeAlpha().raw().toBuffer();
   const b = await sharp(canvas).removeAlpha().raw().toBuffer();
+  const c = await sharp(canvasPoster).removeAlpha().raw().toBuffer();
+  const matchedError = c.reduce((sum, value, index) => sum + Math.abs(value - b[index]), 0) / c.length;
+  console.log(`Diagnostic canvas-poster mean RGB error: ${matchedError.toFixed(3)} / 255`);
   expect(a.length).toBe(b.length);
   const meanError = a.reduce((sum, value, index) => sum + Math.abs(value - b[index]), 0) / a.length;
   await testInfo.attach('poster', { body: poster, contentType: 'image/png' });
