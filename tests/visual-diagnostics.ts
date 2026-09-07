@@ -8,7 +8,14 @@ export async function attachVisualDiagnostics(page: Page, testInfo: TestInfo) {
   const fonts: Record<string, unknown> = {};
   for (const selector of ['h1', '.hero__statement p', '.research-detail__summary', '.site-nav__link']) {
     const { nodeId } = await client.send('DOM.querySelector', { nodeId: root.nodeId, selector });
-    if (nodeId) fonts[selector] = await client.send('CSS.getPlatformFontsForNode', { nodeId });
+    if (nodeId) {
+      const result = await client.send('CSS.getPlatformFontsForNode', { nodeId });
+      fonts[selector] = result;
+      const family = selector === '.site-nav__link' ? 'Inter' : 'Source Serif 4';
+      if (!result.fonts.some((font) => font.isCustomFont && font.familyName === family)) {
+        throw new Error(`${selector} is not rendering with the bundled ${family} font`);
+      }
+    }
   }
   await client.detach();
   const metrics = await page.evaluate(() => ({

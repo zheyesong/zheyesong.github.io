@@ -5,6 +5,8 @@ import sharp from 'sharp';
 import { attachVisualDiagnostics } from './visual-diagnostics';
 import { comparePortraits, portraitMatches, portraitMetrics } from './portrait-quality';
 
+test.use({ video: 'on' });
+
 test('web-only education visibility and concise hero identity', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.hero__role')).toHaveCount(0);
@@ -44,7 +46,7 @@ for (const device of [
   { width: 390, height: 844, deviceScaleFactor: 2 },
 ]) {
 test.describe(`pose comparison at ${device.width}px DPR ${device.deviceScaleFactor}`, () => {
-test.use({ viewport: { width: device.width, height: device.height }, deviceScaleFactor: device.deviceScaleFactor, video: 'on' });
+test.use({ viewport: { width: device.width, height: device.height }, deviceScaleFactor: device.deviceScaleFactor });
 test('static image and zero-angle canvas share their appearance', async ({ page }, testInfo) => {
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
@@ -68,7 +70,10 @@ test('static image and zero-angle canvas share their appearance', async ({ page 
   await testInfo.attach('zero-angle-canvas', { body: canvas, contentType: 'image/png' });
   await testInfo.attach('pixel-comparison', { body: JSON.stringify(metrics), contentType: 'application/json' });
   console.log(`Portrait quality: ${JSON.stringify(metrics)}`);
-  expect(metrics.meanError).toBeLessThan(4);
+  // Linux SwiftShader and the Metal-exported poster differ at subpixel edges.
+  // Keep the original hardware-Mac bound; Linux also must pass all three
+  // independent, unfiltered colour/contrast/detail gates below.
+  expect(metrics.meanError).toBeLessThan(process.platform === 'linux' ? 4 : 2);
   expect(metrics.channelBias).toBeLessThan(1);
   expect(metrics.contrastChange).toBeLessThan(0.02);
   expect(metrics.edgeChange).toBeLessThan(0.03);
